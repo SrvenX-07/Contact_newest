@@ -1,0 +1,39 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
+
+public class Scene1Item : MonoBehaviour
+{
+    //道具obj钩子
+    public GameObject knifeObj;
+    public GameObject
+
+    //道具的获得状态
+    public bool knife = false;
+    public bool key  = false;
+    public bool cd = false;
+    public bool ads = false;
+    public bool envelop = false;
+    public bool postcard = false;
+
+    //获得道具的操作
+    public void gotKnife(){
+        knife = true;
+
+    }
+
+	// Use this for initialization
+	void Start()
+	{
+
+	}
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+}
