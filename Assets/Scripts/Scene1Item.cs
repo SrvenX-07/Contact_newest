@@ -66,6 +66,14 @@ public class Scene1Item : MonoBehaviour
 
 	public GameObject lightOff;
 
+	public GameObject floor2;
+
+	public GameObject guideMaskA;
+	public GameObject guideMaskB;
+	public GameObject guideMaskC;
+
+	public GameObject arrowR;
+
 	//道具的获得状态
 	public bool knife;
 	public bool key;
@@ -91,6 +99,7 @@ public class Scene1Item : MonoBehaviour
 	private float _guideCountTime;
 	private int _chair = 0;
 	private int _lamp = 0;
+	private int _Tips = 0;
 
 	//选择计数器
 	public int _knifeSelCount;
@@ -111,12 +120,18 @@ public class Scene1Item : MonoBehaviour
 	AudioClip BGMClip;
 	AudioListener SystemVol;
 
+	AudioClip chairClip;
+	AudioClip carpetClip;
+	AudioSource SE;
+
 	// 动画资源钩子
 	Animation aGuide;
 	Animation eGuide;
 	Animation dGuide;
 	Animation aChair;
 	Animation aCarpet;
+	Animation aAds;
+	Animation aArrow;
 
 	// 初始化
 	void Start()
@@ -124,7 +139,6 @@ public class Scene1Item : MonoBehaviour
 		mInstance = this;
 
 		Router.guideClear = true;
-
 		//初始化时装载音频
 		recordAudio = pho.GetComponent<AudioSource>();
 		recordClip = pho.GetComponent<AudioSource>().clip;
@@ -132,6 +146,10 @@ public class Scene1Item : MonoBehaviour
 		BGMAudio = BGM.GetComponent<AudioSource>();
 		BGMClip = BGM.GetComponent<AudioSource>().clip;
 		SystemVol = BGM.GetComponent<AudioListener>();
+
+		SE = chair.GetComponent<AudioSource>();
+		chairClip = chair.GetComponent<AudioSource>().clip;
+		carpetClip = carpetActive.transform.GetComponent<AudioSource>().clip;
 
 		BGMAudio.Play();
 
@@ -141,7 +159,16 @@ public class Scene1Item : MonoBehaviour
 		dGuide = desk.GetComponent<Animation>();
 		aChair = chair.GetComponent<Animation>();
 		aCarpet = carpetActive.transform.GetComponent<Animation>();
+		aAds = smallAdsObj.transform.GetComponent<Animation>();
+		aArrow = arrowR.transform.GetComponent<Animation>();
         
+		if (Router.guideClear == false)
+		{
+			arrowR.SetActive(false);
+			guideMaskA.SetActive(true);
+			guideMaskB.SetActive(true);
+			guideMaskC.SetActive(true);
+		}
 	}
 
 	//获得道具的操作
@@ -172,7 +199,7 @@ public class Scene1Item : MonoBehaviour
 		ads = true;
 		Router.ads = ads;
 		textTempTIme = 0;
-		if (Router.guideClear == false && _guideCount >= 9 && _guideCount <= 10 ){
+		if (Router.guideClear == false && _guideCount == 18 ){
 			_guideCount++;
 			GoodsClickInfo.mInstance.SetText("看，它在你的背包里！");
             aGuide.Stop();
@@ -205,19 +232,19 @@ public class Scene1Item : MonoBehaviour
 		if (Router.guideClear == false) {
 			switch (_guideCount)
 			{
-				case 10:
+				case 12:
 					_OnBooks = 0;
 					break;
-				case 11:
+				case 13:
 					_OnBooks = 1;
 					break;
-				case 12:
+				case 14:
 					_OnBooks = 2;
 					break;
-				case 13:
+				case 15:
 					_OnBooks = 3;
 					break;
-				case 14:
+				case 16:
 					_OnBooks = 4;
 					break;
 				default:
@@ -226,7 +253,7 @@ public class Scene1Item : MonoBehaviour
 			}
 		}
 
-		int count = UnityEngine.Random.Range(1, 6);
+		int count = UnityEngine.Random.Range(1, 5);
 		switch (count)
 		{
 			case 1:
@@ -253,13 +280,6 @@ public class Scene1Item : MonoBehaviour
 			GoodsClickInfo.mInstance.SetText("我们有救了");
 			adsObj.SetActive(true);
 		}
-
-		if (_OnBooks == 7)
-			GoodsClickInfo.mInstance.SetText("<color=#000>你想起自己因为游戏而忘记了那天的约定。</color>");
-		if (_OnBooks == 10)
-			GoodsClickInfo.mInstance.SetText("<color=#000>可是你想了想，随时都能联系到对方。</color>");
-		if (_OnBooks == 11)
-            GoodsClickInfo.mInstance.SetText("<color=#000>放鸽子没什么大不了的。</color>");
 	}
 
     //点击窗帘
@@ -267,37 +287,35 @@ public class Scene1Item : MonoBehaviour
 	{
 		textTempTIme = 0;
 		GoodsClickInfo.mInstance.OpenCurtain();
-		GoodsClickInfo.mInstance.SetText("你一定会明白的。");
+		GoodsClickInfo.mInstance.SetText("你有考虑过海军蓝色吗？");
 		curtainActive.SetActive(false);
 	}
 
     //点击海报
 	public void OnPoster(){
+		GoodsClickInfo.mInstance.SetText("可口可乐，挡不住的感觉！");
 		textTempTIme = 0;
 		int count = UnityEngine.Random.Range(1, 3);
 		switch(count){
 			case 1:
-				GoodsClickInfo.mInstance.SetText("可口可乐，挡不住的感觉！");
-				break;
-			case 2:
-				GoodsClickInfo.mInstance.SetText("你之前说划开海报的声音很好听，但我觉得不应该这么做。");
+				GoodsClickInfo.mInstance.SetText("你说划开海报的声音很好听，但我觉得不该这么做。");
 				break;
 			default:
-				break;	
+				break;
 		}
 	}
 
     //点击桌子
 	public void OnDesk(){
+		GoodsClickInfo.mInstance.SetText("经常逛逛推特，说不定能买到同样的款式。");
 		textTempTIme = 0;
-		int count = UnityEngine.Random.Range(1, 3);
+		int count = UnityEngine.Random.Range(1, 2);
         switch (count)
         {
             case 1:
-                GoodsClickInfo.mInstance.SetText("经常逛逛推特，说不定能买到同样的款式。");
                 break;
             case 2:
-                GoodsClickInfo.mInstance.SetText("不错的桌子。");
+				GoodsClickInfo.mInstance.SetText("你的地毯真好看。");
                 break;
             default:
                 break;
@@ -329,8 +347,10 @@ public class Scene1Item : MonoBehaviour
 		int count = UnityEngine.Random.Range(1, 3);
 		switch(count){
 			case 1:
-				if(_chair < 1)
-				    aChair.Play();
+				if(_chair < 1){
+					aChair.Play();
+					SE.PlayOneShot(chairClip);
+				} 
 				GoodsClickInfo.mInstance.SetText("我们应该坐下聊聊了。");
 				_chair++;
 				break;
@@ -487,6 +507,7 @@ public class Scene1Item : MonoBehaviour
 		carpet.SetActive(false);
 		carpetActive.SetActive(true);
 		aCarpet.Play();
+		SE.PlayOneShot(carpetClip);
 	}
 
 	//道具选择的操作 模板
@@ -494,12 +515,16 @@ public class Scene1Item : MonoBehaviour
 	{
 		Debug.Log("_last");
 		_object.GetComponent<RectTransform>().transform.localScale = new Vector2(1f, 1f);
+		if (_object != nullObj)
+		    _object.transform.parent.GetChild(0).gameObject.SetActive(false);
 	}
 
 	private void _selectScale(GameObject _object)
 	{
 		Debug.Log("_select");
 		_object.GetComponent<RectTransform>().transform.localScale = new Vector2(1.2f, 1.2f);
+		if (_object != nullObj)
+		    _object.transform.parent.GetChild(0).gameObject.SetActive(true);
 	}
 
 	private void select_(GameObject _object)
@@ -539,8 +564,6 @@ public class Scene1Item : MonoBehaviour
 		_adsSelCount++;
 		select_(smallAdsObj);
 		GoodsClickInfo.mInstance.SetText("嘿，这堆信可真多。");
-		if (Router.guideClear == false)
-            _guideCount++;
 	}
 
 	public void selectEnvelop()
@@ -698,6 +721,7 @@ public class Scene1Item : MonoBehaviour
 			phoActive.SetActive(true);
 			dresser.SetActive(false);
 			dresserActive.SetActive(true);
+			GoodsClickInfo.mInstance.SetText("我给你的留言！");
 			//这里要播放音乐
 			BGMAudio.Pause();
 			recordAudio.PlayOneShot(recordClip);
@@ -721,6 +745,8 @@ public class Scene1Item : MonoBehaviour
 				dGuide.Stop();
 				desk.GetComponent<RectTransform>().localScale = new Vector2(1.0f, 1.0f);
 				_guideCountTime = 0;
+				guideMaskC.SetActive(true);
+				aAds.Stop();
 			}			
 			useSuccess = true;
 		} else {
@@ -787,7 +813,7 @@ public class Scene1Item : MonoBehaviour
 		_guideCountTime += Time.deltaTime;
 		switch (_guideCount) {
 			case 0:
-				GoodsClickInfo.mInstance.SetText("<color=#146500>这是普通的一天，你从家中醒来，没有任何不对劲。</color>");
+				GoodsClickInfo.mInstance.SetText("这是普通的一天，你从家中醒来，没有任何不对劲。");
 				guidePush(3f);
 				break;
 			case 1:
@@ -799,96 +825,127 @@ public class Scene1Item : MonoBehaviour
 				guidePush(3f);
 				break;
 			case 3:
-				GoodsClickInfo.mInstance.SetText("<color =#146500>你被突然出现的声音吓了一跳，环顾四周却找不到声源。</color>");
+				GoodsClickInfo.mInstance.SetText("我也不知道为什么会变成这样。");
 				guidePush(3f);
 				break;
 			case 4:
-				GoodsClickInfo.mInstance.SetText("我不知道为什么会变成这样。");
-				guidePush(3f);
+				floor2.SetActive(true);
+				guidePush(1f);
 				break;
 			case 5:
-				GoodsClickInfo.mInstance.SetText("之前我们约好了见面，但是你没有出现。");
+				GoodsClickInfo.mInstance.SetText("别找啦，你找不到我的。");
+				floor2.SetActive(false);
 				guidePush(3f);
 				break;
 			case 6:
-				GoodsClickInfo.mInstance.SetText("<color=#146500>你想起那天自己因为游戏而忘记了出门。</color>");
+				GoodsClickInfo.mInstance.SetText("想想你之前做了什么吧。");
 				guidePush(3f);
 				break;
 			case 7:
-				GoodsClickInfo.mInstance.SetText("你说反正这么久没见了，在网上聊天也是一样的。");
+				GoodsClickInfo.mInstance.SetText("之前我们约好了见面，但是你没有出现。");
 				guidePush(3f);
 				break;
 			case 8:
-				GoodsClickInfo.mInstance.SetText("我很生气，再也没跟你说过话。");
+				GoodsClickInfo.mInstance.SetText("当时为什么连电话都不打给我呢？");
 				guidePush(3f);
 				break;
 			case 9:
-				GoodsClickInfo.mInstance.SetText("不过，你现在需要了解一些事。");
+				GoodsClickInfo.mInstance.SetText("后来你还说，既然我们这么久都没见过面了，放我的鸽子也没什么。");
 				guidePush(3f);
 				break;
 			case 10:
-				GoodsClickInfo.mInstance.SetText("点击周围可以进行调查，比如说这些书。");
+				GoodsClickInfo.mInstance.SetText("唉，你肯定不记得了吧。");
+				guidePush(3f);
+				break;
+			case 11:
+				GoodsClickInfo.mInstance.SetText("那么，为了你好，现在你需要了解一些事。");
+				guidePush(3f);
+				break;
+			case 12:
+				GoodsClickInfo.mInstance.SetText("点击周围的环境可以进行调查，比如说桌上的这些书。");
+				guideMaskC.SetActive(false);
 				_OnBooks = 0;
 				aGuide.Play();
 				guidePush(3f);
 				break;
-			case 11:
-				_OnBooks = 1;
-				GoodsClickInfo.mInstance.SetText("请点它。");
-				break;
-			case 12:
-				GoodsClickInfo.mInstance.SetText("再点它，啊，我想到了。");
-				break;
 			case 13:
-				GoodsClickInfo.mInstance.SetText("继续，这些书是我推荐的。");
+				_OnBooks = 1;
+				GoodsClickInfo.mInstance.SetText("请点击它。");
 				break;
 			case 14:
-				GoodsClickInfo.mInstance.SetText("继续点，我想想看。");
-                break;
+				GoodsClickInfo.mInstance.SetText("再点击它，啊，我想到了。");
+				break;
 			case 15:
-			    GoodsClickInfo.mInstance.SetText("看，桌子下面多了什么！");
+				GoodsClickInfo.mInstance.SetText("继续，这些书是我推荐的。");
 				break;
 			case 16:
-				break;
+				GoodsClickInfo.mInstance.SetText("必须继续，为了你自己。");
+				_guideCountTime = 0;
+                break;
 			case 17:
-				GoodsClickInfo.mInstance.SetText("你可以使用它，点击下面道具栏里的它。");
-				if (selectingItem == smallAdsObj) {
-					GoodsClickInfo.mInstance.SetText("他被选中了，然后再点击别处，比如桌子。");
-					_guideCount++;
-				}
-				break;
-			case 18:
-				dGuide.Play();
-				break;
-			case 19:
-				GoodsClickInfo.mInstance.SetText("很简单，对吧！");
+				guideMaskC.SetActive(true);
+			    GoodsClickInfo.mInstance.SetText("看，桌子下面多了什么！");
 				guidePush(3f);
 				break;
+			case 18:
+				guideMaskC.SetActive(false);
+				GoodsClickInfo.mInstance.SetText("点击它就可以放到下方的道具栏中。");
+				Debug.Log(_guideCount);
+				break;
+			case 19:
+				Debug.Log(_guideCount);
+				GoodsClickInfo.mInstance.SetText("你可以再点击一下它，就选中了道具。");
+				aAds.Play();
+				if (selectingItem == smallAdsObj) {
+					aAds.Stop();
+					guideMaskB.SetActive(false);
+					GoodsClickInfo.mInstance.SetText("他被选中了，然后再点击别处，比如桌子。");
+					dGuide.Play();
+				}
+				break;
 			case 20:
-				GoodsClickInfo.mInstance.SetText("虽然什么都没有发生。");
-                guidePush(3f);
+				GoodsClickInfo.mInstance.SetText("你成功了！");
+				guidePush(3f);
 				break;
 			case 21:
-				GoodsClickInfo.mInstance.SetText("别急，只剩一点了。");
+				GoodsClickInfo.mInstance.SetText("很简单，对吧。");
 				guidePush(3f);
 				break;
 			case 22:
-				GoodsClickInfo.mInstance.SetText("双击背包里的道具，看看写了什么。");
-				guidePush(3f);
+				GoodsClickInfo.mInstance.SetText("虽然什么都没有发生。");
+                guidePush(3f);
 				break;
 			case 23:
-				GoodsClickInfo.mInstance.SetText("你自己试试看？我相信你会做的。");
+				GoodsClickInfo.mInstance.SetText("别急，只剩一点了。");
 				guidePush(3f);
 				break;
 			case 24:
-				GoodsClickInfo.mInstance.SetText("这就是你需要知道的一切。");
+				GoodsClickInfo.mInstance.SetText("双击道具栏里的道具，看看上面写了什么。");
+				guideMaskC.SetActive(false);
 				guidePush(3f);
 				break;
 			case 25:
-				GoodsClickInfo.mInstance.SetText("我们还会再见的。");
+				GoodsClickInfo.mInstance.SetText("你自己试试看？我相信你能做到。");
 				guidePush(3f);
 				break;
 			case 26:
+				GoodsClickInfo.mInstance.SetText("这就是你需要知道的一切。");
+				guidePush(3f);
+				break;
+			case 27:
+				GoodsClickInfo.mInstance.SetText("今天我整理东西的时候找到了我们以前的明信片。");
+				guidePush(3f);
+				break;
+			case 28:
+				GoodsClickInfo.mInstance.SetText("等反应过来的时候，就已经变成了现在这样。");
+				guidePush(3f);
+				break;
+			case 29:
+				GoodsClickInfo.mInstance.SetText("总之先<color=#EE350C>四处调查</color>看看有没有什么线索吧。C");
+				guidePush(3f);
+				break;
+			case 30:
+				guideMaskA.SetActive(false);
 				Router.guideClear = true;
 				GoodsClickInfo.mInstance.SetText(null);
 				Router.mInstance.DataSave();
@@ -900,7 +957,7 @@ public class Scene1Item : MonoBehaviour
 	}
 
 	public void guideTouch(){
-		if(_guideCount <= 8 && _guideCount >= 5)
+		if(_guideCount <= 17 && _guideCount >= 13)
 		_guideCount++;
 	}
 
@@ -941,5 +998,16 @@ public class Scene1Item : MonoBehaviour
                 GoodsClickInfo.mInstance.SetText(null);
 				textTempTIme = 0;
         }
+
+		if (knife && ads && _Tips == 0) {
+			GoodsClickInfo.mInstance.SetText("你为什么不看看自己的床呢？");
+			aArrow.Play();
+			_Tips++;
+		}
     }
+
+	public void arrowStop(){
+		aArrow.Stop();
+		_lastScale(arrowR);
+	}
 }

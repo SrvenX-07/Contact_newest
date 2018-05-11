@@ -32,6 +32,7 @@ public class Scene2Manager : MonoBehaviour
 	public GameObject snow;
 	public GameObject holy;
 	public GameObject snowman;
+	public GameObject snowmanActive;
 
 	public GameObject booth;
 
@@ -66,6 +67,12 @@ public class Scene2Manager : MonoBehaviour
 	AudioSource audioDoo;
 	AudioClip clipDoo;
 
+	AudioClip snowMan;
+	AudioClip Hallelu;
+	AudioClip sadFaceClip;
+
+	AudioSource SE;
+
 	public GameObject BGM;
 	AudioSource BGMAudio;
 	AudioClip BGMClip;
@@ -75,6 +82,7 @@ public class Scene2Manager : MonoBehaviour
 	private int i = 0;
 	private int d = 0;
 	private int c = 0;
+	private int _halleluCount;
 
 	//选择计数器
 	public int _knifeSelCount;
@@ -177,7 +185,7 @@ public class Scene2Manager : MonoBehaviour
 	{
 		_ringSelCount++;
 		select_(smallRingObj);
-		GoodsClickInfo.mInstance.SetText("他太吵了，我宁愿把他挂在哪里。");
+		GoodsClickInfo.mInstance.SetText("他太吵了，我宁愿把他挂在那里。");
 	}
 
 	public void selectCamera()
@@ -279,6 +287,14 @@ public class Scene2Manager : MonoBehaviour
 		}
 	}
 
+    //必然使用失败
+	public void UseOnFaild(){
+		if (selectingItem != nullObj){
+			GoodsClickInfo.mInstance.SetText("抱歉，它不能这么用。");
+			useFailed = true;
+		}
+	}
+
     // 对圣光使用
 	public void UseOnHoly()
 	{
@@ -354,36 +370,68 @@ public class Scene2Manager : MonoBehaviour
 	//复盘动作
 	private void ResetPosInfo()
 	{
-		if(Router.isLoaded == true)
+		if(Router.isLoaded)
 		{
-			if (Router.ring == true){
+			if (Router.ring){
 				SetpropPos.mInstance.SetPos(smallRingObj);
 				ringObj.SetActive(false);
 				ringBoard.SetActive(false);
 				gotRing();
 			}
-			if (Router.card == true){
+			if (Router.card){
 				SetpropPos.mInstance.SetPos(smallCardObj);
 				brick.SetActive(false);
-				gotCard();}
+				gotCard();
+			}
+			if (Router.knife2Used){
+				phoneBook.SetActive(false);
+				phoneBookActive.SetActive(true);
+			}
+			if (Router.teleCardUsed) 
+			{
+				num1.SetActive(true);
+				if (Router.knife2Used)
+					num2.SetActive(true);
+			}
+			if (Router._camera)
+			{
+				snowman.SetActive(false);
+				cameraObj.SetActive(false);
+				snowmanActive.SetActive(true);
+				gotCamera();
+			}
+			if (Router.cameraUsed) 
+			{
+				Destroy(smallCameraObj);
+				SetpropPos.mInstance.SetPos(smallPhotoObj);
+				holy.SetActive(false);
+			}
 			Router.isLoaded = false;
 		}
 	}
 
     //点击圣光
 	public void OnHoly(){
-		int count = Random.Range(1, 4);
-		switch (count) {
+		_halleluCount++;
+		int count = Random.Range(1, 2);
+		switch (count)
+		{
 			case 1:
-				GoodsClickInfo.mInstance.SetText("你看！圣光！");
+				GoodsClickInfo.mInstance.SetText("你看！圣光！"); 
 				break;
 			case 2:
 				GoodsClickInfo.mInstance.SetText("如果有相机我想我们还能在这里拍个照。");
+				if (Router._camera)
+					GoodsClickInfo.mInstance.SetText("快拍一张看看！");
 				break;
-			default:
-				break;
+
 		}
-	}
+		if (_halleluCount == 4)
+        {
+			SE.PlayOneShot(Hallelu);
+			_halleluCount = 0;
+        }
+    }
 
     //点击拨号盘
 	public void OnNumPad(){
@@ -425,16 +473,20 @@ public class Scene2Manager : MonoBehaviour
 				GoodsClickInfo.mInstance.SetText("一个雪人！");
 				break;
 			case 2:
-				GoodsClickInfo.mInstance.SetText("还是这个雪人！");
+				GoodsClickInfo.mInstance.SetText("这个雪人是谁堆的呢？");
 				break;
 			case 3:
 				snowman.SetActive(false);
 				cameraObj.SetActive(true);
+				SE.PlayOneShot(snowMan);
 				GoodsClickInfo.mInstance.SetText("这是我给你的相机吧？");
 				break;
-			default:
-				break;
 		}
+	}
+
+    //点击电话本体
+	public void OnPhone(){
+		GoodsClickInfo.mInstance.SetText("你应该打个电话给我的。");
 	}
 
 	// Use this for initialization
@@ -451,6 +503,11 @@ public class Scene2Manager : MonoBehaviour
 		BGMAudio = BGM.GetComponent<AudioSource>();
 		BGMClip = BGM.GetComponent<AudioSource>().clip;
 		Debug.Log(BGMAudio);
+
+		SE = knifeObj.GetComponent<AudioSource>();
+		Hallelu = holy.GetComponent<AudioSource>().clip;
+		snowMan = knifeObj.GetComponent<AudioSource>().clip;
+		sadFaceClip = glass.GetComponent<AudioSource>().clip;
 
 		BGMAudio.Play();
 	}
@@ -504,7 +561,7 @@ public class Scene2Manager : MonoBehaviour
     //点击电话亭内部
 	public void OnBooth()
     {
-        int a = Random.Range(1, 4);
+        int a = Random.Range(1, 3);
         switch (a)
         {
             case 1:
@@ -516,8 +573,6 @@ public class Scene2Manager : MonoBehaviour
 			case 3:
 				GoodsClickInfo.mInstance.SetText("虽然严格来说我现在不算人？");
 				break;
-            default:
-                break;
         }
     }
 

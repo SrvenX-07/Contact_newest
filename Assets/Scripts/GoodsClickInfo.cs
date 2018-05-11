@@ -198,12 +198,11 @@ public class GoodsClickInfo : MonoBehaviour
 
     public void OpenCurtain()
     {
+		curtain++;
         audiocurtain.PlayOneShot(clipCurtain);
 		Scene1Item.mInstance.curtainActive.SetActive(true);
-		if (Router.guideClear)
-			curtain++;
-		    if (curtain <= 1)
-		    Scene1Item.mInstance.knifeObj.SetActive(true);
+		if (curtain <= 1)
+			Scene1Item.mInstance.knifeObj.SetActive(true);
         TipsText.text = "我不明白为什么外⾯灰蒙蒙的。";
     }
 }

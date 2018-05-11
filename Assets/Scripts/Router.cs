@@ -31,12 +31,16 @@ public class Router : MonoBehaviour
 	public static bool dolphUsed;
 	public static bool errUsed;
 	public static bool musicUsed;
-	public static bool gameClear;
-	public static bool guideClear;
 	public static bool knife2Used;
 	public static bool cameraUsed;
+	public static bool photoUsed;
 
-	public static bool isLoaded = false;
+	//读取目的开关
+	public static bool isLoaded;
+	public static bool forGame;
+	public static bool forHistory;
+	public static bool forStart;
+	public static bool loadFaild;
 
 	public string SceneNum = "";
 
@@ -45,7 +49,7 @@ public class Router : MonoBehaviour
 
 	//智障手段路由表
 	//场景1道具状态获取
-	public static List<bool> Scene1ItemStatus = new List<bool>(new bool[] { true, true, true, true,true,true });
+	public static List<bool> Scene1ItemStatus = new List<bool>(new bool[] { true, true, true, true, true, true });
 	public static bool knife1;
 	public static bool key;
 	public static bool cd;
@@ -78,14 +82,30 @@ public class Router : MonoBehaviour
 	public GameObject TR1;
 	public GameObject TR2;
 
+	//标题界面用
+	public GameObject Saving;
+
+
 	//结局开关
+	public static List<bool> EndingStatus = new List<bool>(new bool[] { true, true, true, true, true, true });
 	public static bool sED1;
 	public static bool sED2;
 	public static bool sED3;
 	public static bool sED4;
+	public static bool gameClear;
+	public static bool guideClear;
+	public static int gameClearTimes;
+	public static bool isFirstTime;
+
+	//系统
+	public static bool isSaving;
 
 	//计时器
 	private float autoSaveTime;
+
+	//存档位置
+	public static string saveFile;
+	public static string savePath;
 
 	//结局控制
 	public void result()
@@ -93,15 +113,18 @@ public class Router : MonoBehaviour
 		if (diaNum1st)
 		{
 			ED2.SetActive(true);
+			sED2 = true;
 		}
 
 		if (diaNum2nd)
 		{
 			Scene2Manager.mInstance.ringBoard.SetActive(true);
-			if(cameraUsed)
+			if (cameraUsed)
 			{
 				TR2.SetActive(true);
-			} else {
+			}
+			else
+			{
 				TR1.SetActive(true);
 			}
 		}
@@ -109,17 +132,21 @@ public class Router : MonoBehaviour
 		if (envelopUsed && favUsed)
 		{
 			ED4.SetActive(true);
+			sED4 = true;
 		}
 
 		if (postCardUsed)
 		{
 			ED1.SetActive(true);
+			sED1 = true;
 		}
 
 		if (dolphUsed)
 		{
 			ED3.SetActive(true);
+			sED3 = true;
 		}
+		DataSave();
 	}
 
 	public void output()
@@ -132,10 +159,11 @@ public class Router : MonoBehaviour
 
 	public void DataSave()
 	{
+		isSaving = true;
+
 		SaveData saveData = new SaveData();
 
-		string fileName = Application.dataPath + "/Save" + "/GameData.json";
-		StreamWriter streamWriter = new StreamWriter(fileName);
+		StreamWriter streamWriter = new StreamWriter(saveFile);
 
 		//手动保存场景1的flag
 		Scene1ItemStatus[0] = knife1;
@@ -160,28 +188,46 @@ public class Router : MonoBehaviour
 		Scene3ItemStatus[4] = dolph;
 
 		//手动保存全局路线FLAG
-		RouterAll = new List<bool>(new bool[] { knifeUsed, postCardUsed, envelopUsed, keyUsed, cdUsed, adsUsed, dooUsed, ringUsed, teleCardUsed, diaNum1st, diaNum2nd, gifUsed, jpgUsed, comUsed, favUsed, dolphUsed, errUsed, musicUsed, gameClear,knife2Used });
+		RouterAll = new List<bool>(new bool[] { knifeUsed, postCardUsed, envelopUsed, keyUsed, cdUsed, adsUsed, dooUsed, ringUsed, teleCardUsed, diaNum1st, diaNum2nd, gifUsed, jpgUsed, comUsed, favUsed, dolphUsed, errUsed, musicUsed, knife2Used });
 
+		//手动保存结局与教程FLAG
+		EndingStatus[0] = sED1;
+		EndingStatus[1] = sED2;
+		EndingStatus[2] = sED3;
+		EndingStatus[3] = sED4;
+		EndingStatus[4] = gameClear;
+		EndingStatus[5] = guideClear;
+
+		//将存档放入存档数据结构中
 		saveData.N1 = RouterAll;
 		saveData.N2 = Scene1ItemStatus;
 		saveData.N3 = Scene2ItemStatus;
 		saveData.N4 = Scene3ItemStatus;
+		saveData.N5 = EndingStatus;
 		saveData.sceneNum = SceneManager.GetActiveScene().name;
+		saveData.gameClearTimes = gameClearTimes;
 
+		//写入
 		string jSaveData = JsonMapper.ToJson(saveData);
 		streamWriter.Write(jSaveData);
 		streamWriter.Close();
+
+		isSaving = false;
 	}
 
 	public void DataLoad()
 	{
-		string saveFile = Application.dataPath + "/Save" + "/GameData.json";
 		StreamReader streamReader = new StreamReader(saveFile);
 		string jLoadData = streamReader.ReadToEnd();
 		streamReader.Close();
 
 		SaveData loadData = new SaveData();
 		loadData = JsonMapper.ToObject<SaveData>(jLoadData);
+
+		if (loadData == null) {
+			loadFaild = true;
+
+		}
 
 		//手动写入场景1的flag
 		knife1 = loadData.N2[0];
@@ -192,14 +238,16 @@ public class Router : MonoBehaviour
 		postcard = loadData.N2[5];
 		Debug.Log("场景1FLAG");
 
-        //手动写入场景2的flag
+		//手动写入场景2的flag
 		ring = loadData.N3[0];
 		card = loadData.N3[1];
-		knife2 = loadData.N3[2];;
+		_camera = loadData.N3[2];
+		photo = loadData.N3[3];
+		knife2 = loadData.N3[4];
 		Debug.Log("场景2FLAG");
 		Debug.Log(ring);
 
-        //手动写入场景3的flag
+		//手动写入场景3的flag
 		myComp = loadData.N4[0];
 		jpg = loadData.N4[1];
 		png = loadData.N4[2];
@@ -207,7 +255,7 @@ public class Router : MonoBehaviour
 		dolph = loadData.N4[4];
 		Debug.Log("场景3FLAG");
 
-        //手动写入路线控制FLAG
+		//手动写入路线控制FLAG
 		knifeUsed = loadData.N1[0];
 		postCardUsed = loadData.N1[1];
 		envelopUsed = loadData.N1[2];
@@ -226,23 +274,60 @@ public class Router : MonoBehaviour
 		dolphUsed = loadData.N1[15];
 		errUsed = loadData.N1[16];
 		musicUsed = loadData.N1[17];
-		gameClear = loadData.N1[18];
-		knife2Used = loadData.N1[19];
+		knife2Used = loadData.N1[18];
 		Debug.Log("路线FLAG");
 
+		sED1 = loadData.N5[0];
+		sED2 = loadData.N5[1];
+		sED3 = loadData.N5[2];
+		sED4 = loadData.N5[3];
+		gameClear = loadData.N5[4];
+		guideClear = loadData.N5[5];
+		Debug.Log("结局FLAG");
+
 		SceneNum = loadData.sceneNum;
+
+		gameClearTimes = loadData.gameClearTimes;
+
+		isFirstTime = loadData.isFirstTime;
 
 		isLoaded = true;
 
 		loadEnd();
 	}
 
-	public void loadEnd() {
+	public void loadEnd()
+	{
 		//读取结束之后执行
 		if (isLoaded == true)
 		{
-			SceneManager.LoadScene(SceneNum);
+			if (forGame)
+			{
+				SceneManager.LoadScene(SceneNum);
+				forGame = false;
+			}
+			else
+			{
+				SceneManager.LoadScene("1-1");
+			}
+
+			isLoaded = false;
+
+			if (forHistory)
+			{
+
+			}
 		}
+	}
+
+	public void loadForContinue() {
+		forGame = true;
+		DataLoad();
+	}
+
+	public void loadForHistory() {
+		forHistory = true;
+		DataLoad();
 	}
 
 	public void SoundOff(){
@@ -267,14 +352,35 @@ public class Router : MonoBehaviour
 	    //接受场景3的道具FLAG值
 	    public List<bool> N4;
 
+		//接受结局和教程的FLAG值
+		public List<bool> N5;
+
 	    //接受存档时的场景编号
 	    public string sceneNum;
+
+		public int gameClearTimes;
+
+		public bool isFirstTime;
     }
 
 	// Use this for initialization
 	void Start()
 	{
 		mInstance = this;
+
+		saveFile = Application.dataPath + "/Save" + "/GameData.json";
+		savePath = Application.dataPath + "/Save";
+
+		if (!Directory.Exists(savePath))
+		{
+			isSaving = true;
+			Directory.CreateDirectory(savePath);
+			if (!File.Exists(saveFile))
+			{
+				File.CreateText(saveFile);
+				isFirstTime = true;
+			}
+		}
 	}
 
 	// Update is called once per frame
@@ -282,13 +388,21 @@ public class Router : MonoBehaviour
 	{
 		//1分钟之后自动保存数据
 		autoSaveTime += Time.deltaTime;
-		if(Time.deltaTime >= 120f)
+		if (Time.deltaTime >= 120f)
 		{
-			if(SceneNum != "StartScene")
-			    DataSave();
-			autoSaveTime = 0;
-			Debug.Log("auto save");
+			if (SceneNum != "StartScene")
+			{
+				DataSave();
+				autoSaveTime = 0;
+				Debug.Log("auto save");
+			}
 		}
-			
+
+		if(isFirstTime || loadFaild)
+		{
+			DataSave();
+			loadFaild = false;
+			isFirstTime = false;
+		}
 	}
 }

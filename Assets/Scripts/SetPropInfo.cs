@@ -52,8 +52,6 @@ public class SetPropInfo : MonoBehaviour, IPointerClickHandler
 	public GameObject error;
 
 	private float delay = 1f;
-	private float firstClickTime = 0;
-	private bool oneClick = false;
 	Scene1Item scene1Item = new Scene1Item();
 
 	public GameObject music;
@@ -65,7 +63,6 @@ public class SetPropInfo : MonoBehaviour, IPointerClickHandler
 	AudioClip clipdoo;
 
 	private int touch1 = 0;
-	private int touch2 = 0;
 	private float doubleTouchTime = 0;
 	private bool _doubleTouch;
 	private bool _doubleClick;
@@ -162,11 +159,6 @@ public class SetPropInfo : MonoBehaviour, IPointerClickHandler
 		doubleTouch();
 		// 如果当前的时间 - 第一次点击的时间 > 0.5秒 直接将点击都回归到false状态  
 		// 因为已经没有继续判断的必要了  
-		if (Time.time - firstClickTime > delay)
-		{
-			oneClick = false;
-		}
-
 
 		if (_doubleClick || _doubleTouch)
 		{

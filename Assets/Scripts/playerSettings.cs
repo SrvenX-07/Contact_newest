@@ -15,7 +15,7 @@ public class playerSettings : MonoBehaviour {
     void Jump()
 
     {
-        Application.LoadLevel("StartScene");//“loading”是所要跳转的目标场景名称
+		SceneManager.LoadScene("StartScene");//“loading”是所要跳转的目标场景名称
 
     }
 
