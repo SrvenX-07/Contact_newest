@@ -9,13 +9,6 @@ public class RouterInitia : MonoBehaviour
     {
 		//多周目保证博物馆内CG和收集正常
 		//做收集系统的FLAG还不够
-
-		if (!Directory.Exists(Router.savePath))
-        {
-			Directory.CreateDirectory(Router.savePath);
-			if (!File.Exists(Router.saveFile))
-				File.CreateText(Router.saveFile);
-        }
         
 		Router.mInstance.DataLoad();
 

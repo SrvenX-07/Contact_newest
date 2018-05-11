@@ -78,6 +78,7 @@ public class Scene3Manager : MonoBehaviour
     private int winRemixCount = 0;
     public float NotFoundTime = 0;
     private int dolphin = 0;
+	private int _gifG;
     private int error = 0;
     private int music = 0;
 
@@ -104,11 +105,15 @@ public class Scene3Manager : MonoBehaviour
     private void _lastScale(GameObject _object)
     {
         _object.GetComponent<RectTransform>().transform.localScale = new Vector2(1f, 1f);
+		if (_object != nullObj)
+            _object.transform.parent.GetChild(0).gameObject.SetActive(false);
     }
 
     private void _selectScale(GameObject _object)
     {
         _object.GetComponent<RectTransform>().transform.localScale = new Vector2(1.2f, 1.2f);
+		if (_object != nullObj)
+			_object.transform.parent.GetChild(0).gameObject.SetActive(true);
     }
 
     private void select_(GameObject _object)
@@ -294,12 +299,21 @@ public class Scene3Manager : MonoBehaviour
 
     //对海豚使用
     public void UseOnDolph(){
-        if(selectingItem == smallMyCompObj)
-        {
-            dolphIcon.SetActive(false);
-            dolphObj.SetActive(true);
-            useSuccess = true;
-        }
+		if (Router.gifUsed || Router.jpgUsed)
+		{
+			if (selectingItem == smallMyCompObj)
+			{
+				dolphIcon.SetActive(false);
+				dolphObj.SetActive(true);
+				useSuccess = true;
+			} else {
+				GoodsClickInfo.mInstance.SetText("哦，我暂时不需要它。");
+				useFailed = true;
+			}
+		} else {
+			useFailed = true;
+			GoodsClickInfo.mInstance.SetText("哦，我暂时不需要它。");
+		}
 
         if(selectingItem == smallJpgObj)
         {
@@ -307,11 +321,15 @@ public class Scene3Manager : MonoBehaviour
             desktopErr.SetActive(true);
             Destroy(smallPngObj);
 			Router.jpgUsed = true;
+			GoodsClickInfo.mInstance.SetText("好久不见！");
             useSuccess = true;
+		} else {
+            useFailed = true;
         }
 
         if(selectingItem == smallPngObj){
             gifGirl.SetActive(true);
+			GoodsClickInfo.mInstance.SetText("真是位美丽的姑娘。");
             Destroy(smallJpgObj);
 			Router.gifUsed = true;
             useSuccess = true;
@@ -340,11 +358,11 @@ public class Scene3Manager : MonoBehaviour
 
         error++;
         if (error == 1)
-            GoodsClickInfo.mInstance.SetText("我不知道哪里出错了……");
+            GoodsClickInfo.mInstance.SetText("你不知道哪里出错了。");
         else if (error == 2)
-            GoodsClickInfo.mInstance.SetText("好吧……");
+            GoodsClickInfo.mInstance.SetText("好吧。");
         else if (error >= 3)
-            GoodsClickInfo.mInstance.SetText("我继续想办法试试看！");
+            GoodsClickInfo.mInstance.SetText("你变得更加心烦了。");
         Debug.Log(winRemixCount);
 
         if (winRemixCount > 6)
@@ -353,6 +371,9 @@ public class Scene3Manager : MonoBehaviour
             BGMWrongAudio.Pause();
             ErrorRemixAudio.Play();
         }
+
+		if(Router.dolph)
+			GoodsClickInfo.mInstance.SetText("可真烦人不是吗？不过我会帮您的。");
     }
 
     public void OnMusicFile()
@@ -361,18 +382,21 @@ public class Scene3Manager : MonoBehaviour
         if (music == 1)
             GoodsClickInfo.mInstance.SetText("让我们来试试。");
         else if (music == 2)
-            GoodsClickInfo.mInstance.SetText("看来他不合你的胃口。");
+            GoodsClickInfo.mInstance.SetText("看来它不合你的胃口。");
         else if (music == 3)
             GoodsClickInfo.mInstance.SetText("我是说，你真的不喜欢？");
         else if (music == 4)
-            GoodsClickInfo.mInstance.SetText("你最好再考虑考虑。");
+            GoodsClickInfo.mInstance.SetText("这是设计师的尊严。");
         else if (music == 5)
         {
-            GoodsClickInfo.mInstance.SetText("拿去！");
+            GoodsClickInfo.mInstance.SetText("好吧好吧，我投降。");
             BGMAudio.Pause();
             ErrorRemixAudio.Pause();
             BGMWrongAudio.Play();
         }
+
+		if (Router.dolph)
+            GoodsClickInfo.mInstance.SetText("来为派对预热一下吧！");
     }
 
     public void OnNotFoundButton(){
@@ -400,9 +424,70 @@ public class Scene3Manager : MonoBehaviour
                 GoodsClickInfo.mInstance.SetText("她就在不远的地方，是个无害的石头小姑娘。");
                 break;
             default:
+				GoodsClickInfo.mInstance.SetText("您找到她了吗？");
                 break;
         }
+
+		if (Router.gifUsed)
+			OnGifGirl();
+
+		if (Router.jpgUsed)
+			OnJpgGirl();
+
+		if (Router.comUsed)
+			GoodsClickInfo.mInstance.SetText("您可真是位绅士，我会尽我所能的帮助你，带我走吧。");
+			
     }
+
+	public void OnMailSender(){
+		GoodsClickInfo.mInstance.SetText("就像电子版的邮筒。");
+		int index = Random.Range(1, 4);
+		switch (index) {
+			case 1:
+				GoodsClickInfo.mInstance.SetText("或许可以通过写邮件联系她。");
+				break;
+			case 2:
+				GoodsClickInfo.mInstance.SetText("你不知道该往邮件里写些什么。");
+				break;
+			default:
+				break;
+		}
+
+		if (Router.dolph)
+			GoodsClickInfo.mInstance.SetText("噢，这就是您烦恼的根源吧，让我来帮你写。");
+	}
+    
+	public void OnJpgGirl(){
+		_gifG++;
+		switch(_gifG){
+			case 1:
+				GoodsClickInfo.mInstance.SetText("Let’s party!");
+				break;
+			case 2:
+				GoodsClickInfo.mInstance.SetText("噢不，我还得先帮助你吧，这位慷慨的人。");
+                break;
+			case 3:
+				GoodsClickInfo.mInstance.SetText("我很想亲自报答您的恩情，但我需要多了解您一点。");
+                break;
+			case 4:
+				GoodsClickInfo.mInstance.SetText("您知道，这不是为了窃取什么隐私，只是为了互相了解。");
+                break;
+			case 5:
+				GoodsClickInfo.mInstance.SetText("我已经十足相信您是正派人士了，只是还需要再一点的信息。");
+                break;
+			case 6:
+				GoodsClickInfo.mInstance.SetText("我需要存放有文件的电脑来得到信息。");
+                break;
+			default:
+				GoodsClickInfo.mInstance.SetText("电脑就在附近，您可以再找一找。");
+				break;
+		}
+
+	}
+
+	public void OnGifGirl(){
+		GoodsClickInfo.mInstance.SetText("但这是谁？");
+	}
 
     //复盘动作
 	private void ResetPosInfo()

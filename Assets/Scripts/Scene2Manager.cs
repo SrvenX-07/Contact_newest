@@ -48,6 +48,8 @@ public class Scene2Manager : MonoBehaviour
 	public GameObject phone;
 	public GameObject glass;
 
+	public GameObject flash;
+
 	public GameObject arrowL;
 	public GameObject arrowR;
 
@@ -70,6 +72,7 @@ public class Scene2Manager : MonoBehaviour
 	AudioClip snowMan;
 	AudioClip Hallelu;
 	AudioClip sadFaceClip;
+	AudioClip cut;
 
 	AudioSource SE;
 
@@ -83,6 +86,7 @@ public class Scene2Manager : MonoBehaviour
 	private int d = 0;
 	private int c = 0;
 	private int _halleluCount;
+	private int _falsh;
 
 	//选择计数器
 	public int _knifeSelCount;
@@ -103,6 +107,9 @@ public class Scene2Manager : MonoBehaviour
 	public float endTime;
 	public float tempTime;
 
+	//动画
+	Animation flash_;
+
 	//计时器
 	private float ringTime;
 
@@ -110,11 +117,15 @@ public class Scene2Manager : MonoBehaviour
 	private void _lastScale(GameObject _object)
 	{
 		_object.GetComponent<RectTransform>().transform.localScale = new Vector2(1f, 1f);
+		if (_object != nullObj)
+            _object.transform.parent.GetChild(0).gameObject.SetActive(false);
 	}
 
 	private void _selectScale(GameObject _object)
 	{
 		_object.GetComponent<RectTransform>().transform.localScale = new Vector2(1.2f, 1.2f);
+		if (_object != nullObj)
+			_object.transform.parent.GetChild(0).gameObject.SetActive(true);
 	}
 
 	private void select_(GameObject _object)
@@ -260,6 +271,7 @@ public class Scene2Manager : MonoBehaviour
 			phoneBook.SetActive(false);
 			phoneBookActive.SetActive(true);
 			Router.knife2Used = true;
+			SE.PlayOneShot(cut);
 			//播放声音
 			useSuccess = true;
 		}
@@ -301,9 +313,15 @@ public class Scene2Manager : MonoBehaviour
 		if (selectingItem == smallCameraObj)
 		{
 			//播放声效与动画
+			flash.SetActive(true);
 			smallPhotoObj.SetActive(true);
+			flash_.Play();
+			holy.SetActive(false);
 			SetpropPos.mInstance.SetPos(smallPhotoObj);
 			Destroy(smallCameraObj);
+			GoodsClickInfo.mInstance.SetText("看看我们的照片吧！");
+			Router.photo = true;
+			Router.cameraUsed = true;
 			useSuccess = true;
 		} else {
 			useFailed = true;
@@ -413,7 +431,7 @@ public class Scene2Manager : MonoBehaviour
     //点击圣光
 	public void OnHoly(){
 		_halleluCount++;
-		int count = Random.Range(1, 2);
+		int count = Random.Range(1, 3);
 		switch (count)
 		{
 			case 1:
@@ -508,6 +526,9 @@ public class Scene2Manager : MonoBehaviour
 		Hallelu = holy.GetComponent<AudioSource>().clip;
 		snowMan = knifeObj.GetComponent<AudioSource>().clip;
 		sadFaceClip = glass.GetComponent<AudioSource>().clip;
+		cut = booth.GetComponent<AudioSource>().clip;
+
+		flash_ = flash.transform.GetComponent<Animation>();
 
 		BGMAudio.Play();
 	}
@@ -565,7 +586,7 @@ public class Scene2Manager : MonoBehaviour
         switch (a)
         {
             case 1:
-				GoodsClickInfo.mInstance.SetText("里面真的暖和多了。");
+				GoodsClickInfo.mInstance.SetText("你应该打个电话给我。");
                 break;
             case 2:
 				GoodsClickInfo.mInstance.SetText("我也是第一次感受跟别人挤在一个电话亭里。");

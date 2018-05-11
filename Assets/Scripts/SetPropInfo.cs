@@ -16,16 +16,9 @@ public class SetPropInfo : MonoBehaviour, IPointerClickHandler
 	public Text ContenText;
 	public bool isMask = true;
 	public GameObject use;
-
-	//public GameObject dress;
-	//public GameObject dress_active;
+    
 	public GameObject MaskGameObject;
 	public GameObject Mask1GameObject;
-	//public GameObject ED1;
-	//public GameObject nextScene;
-	//public GameObject arrowL;
-	//public GameObject arrowR;
-	//public GameObject ED4;
 
 	public GameObject DooGameObject;
 	public GameObject CellPhoneGameObject;
@@ -34,11 +27,6 @@ public class SetPropInfo : MonoBehaviour, IPointerClickHandler
 	public GameObject png;
 	public GameObject smallicon_doph;
 	public GameObject smallicon_fav;
-	//public GameObject smallicon_doo;
-	//public GameObject smallicon_knife;
-	//public GameObject smallicon_card;
-	//public GameObject smallicon_cd;
-	//public GameObject smallicon_key;
 
 	public GameObject phonebook_active;
 	public GameObject num1;
@@ -50,8 +38,7 @@ public class SetPropInfo : MonoBehaviour, IPointerClickHandler
 	public GameObject gifgirl;
 	public GameObject desk1;
 	public GameObject error;
-
-	private float delay = 1f;
+    
 	Scene1Item scene1Item = new Scene1Item();
 
 	public GameObject music;
@@ -262,7 +249,7 @@ public class SetPropInfo : MonoBehaviour, IPointerClickHandler
 				case "fav":
 					image.sprite = Resources.Load("fav", typeof(Sprite)) as Sprite;
 					TitleText.text = "收藏夹";
-					ContenText.text = "不知道艾米会不会喜欢。";
+					ContenText.text = "里面装的全是我喜欢的东西，好像可以和人分享。";
 					use.SetActive(false);
 					_initDoubleCT();
 					break;

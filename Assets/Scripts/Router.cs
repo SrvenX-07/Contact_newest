@@ -78,6 +78,7 @@ public class Router : MonoBehaviour
 	public GameObject ED2;
 	public GameObject ED3;
 	public GameObject ED4;
+	public GameObject ED5;
 
 	public GameObject TR1;
 	public GameObject TR2;
@@ -87,11 +88,12 @@ public class Router : MonoBehaviour
 
 
 	//结局开关
-	public static List<bool> EndingStatus = new List<bool>(new bool[] { true, true, true, true, true, true });
+	public static List<bool> EndingStatus = new List<bool>(new bool[] { true, true, true, true, true, true, true });
 	public static bool sED1;
 	public static bool sED2;
 	public static bool sED3;
 	public static bool sED4;
+	public static bool sED5;
 	public static bool gameClear;
 	public static bool guideClear;
 	public static int gameClearTimes;
@@ -131,8 +133,14 @@ public class Router : MonoBehaviour
 
 		if (envelopUsed && favUsed)
 		{
-			ED4.SetActive(true);
-			sED4 = true;
+			if (cameraUsed)
+			{
+				ED4.SetActive(true);
+				sED4 = true;
+			} else {
+				ED5.SetActive(true);
+				sED5 = true;
+			}
 		}
 
 		if (postCardUsed)
@@ -195,8 +203,9 @@ public class Router : MonoBehaviour
 		EndingStatus[1] = sED2;
 		EndingStatus[2] = sED3;
 		EndingStatus[3] = sED4;
-		EndingStatus[4] = gameClear;
-		EndingStatus[5] = guideClear;
+		EndingStatus[4] = sED5;
+		EndingStatus[5] = gameClear;
+		EndingStatus[6] = guideClear;
 
 		//将存档放入存档数据结构中
 		saveData.N1 = RouterAll;
@@ -281,8 +290,9 @@ public class Router : MonoBehaviour
 		sED2 = loadData.N5[1];
 		sED3 = loadData.N5[2];
 		sED4 = loadData.N5[3];
-		gameClear = loadData.N5[4];
-		guideClear = loadData.N5[5];
+		sED5 = loadData.N5[4];
+		gameClear = loadData.N5[5];
+		guideClear = loadData.N5[6];
 		Debug.Log("结局FLAG");
 
 		SceneNum = loadData.sceneNum;

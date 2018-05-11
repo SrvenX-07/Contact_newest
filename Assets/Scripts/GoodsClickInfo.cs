@@ -202,7 +202,12 @@ public class GoodsClickInfo : MonoBehaviour
         audiocurtain.PlayOneShot(clipCurtain);
 		Scene1Item.mInstance.curtainActive.SetActive(true);
 		if (curtain <= 1)
+		{
+			TipsText.text = "刚刚有什么东西掉下来了？";
 			Scene1Item.mInstance.knifeObj.SetActive(true);
-        TipsText.text = "我不明白为什么外⾯灰蒙蒙的。";
+		} else {
+			TipsText.text = "我不明白外面为什么灰蒙蒙的。";
+		}
+        
     }
 }
