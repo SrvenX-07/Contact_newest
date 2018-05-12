@@ -57,6 +57,7 @@ public class RouterInitia : MonoBehaviour
 
 		//gameClear 状态
 		Router.gameClear = false;
+		Router.guideClear = false;
 
 		if (Router.gameClearTimes >= 1)
 			Router.guideClear = true;

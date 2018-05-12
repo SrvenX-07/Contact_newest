@@ -205,6 +205,7 @@ public class GoodsClickInfo : MonoBehaviour
 		{
 			TipsText.text = "刚刚有什么东西掉下来了？";
 			Scene1Item.mInstance.knifeObj.SetActive(true);
+			Scene1Item.mInstance.aKnife_();
 		} else {
 			TipsText.text = "我不明白外面为什么灰蒙蒙的。";
 		}

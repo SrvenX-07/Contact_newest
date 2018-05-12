@@ -169,6 +169,7 @@ public class SetPropInfo : MonoBehaviour, IPointerClickHandler
 					use.GetComponent<Button>().onClick.AddListener(delegate ()
 					{
 						envelop_me();
+						mGameObject.SetActive(false);
 					});
 					_initDoubleCT();
 					break;
@@ -187,6 +188,7 @@ public class SetPropInfo : MonoBehaviour, IPointerClickHandler
 					use.GetComponent<Button>().onClick.AddListener(delegate ()
 					{
 						postcard();
+						mGameObject.SetActive(false);
 					});
 					_initDoubleCT();
 					break;

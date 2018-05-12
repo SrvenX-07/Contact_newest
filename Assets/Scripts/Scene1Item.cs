@@ -122,6 +122,11 @@ public class Scene1Item : MonoBehaviour
 
 	AudioClip chairClip;
 	AudioClip carpetClip;
+	AudioClip lampClip;
+	AudioClip knifeClip;
+	AudioClip envelopClip;
+	AudioClip bookClip;
+	AudioClip bedClip;
 	AudioSource SE;
 
 	// 动画资源钩子
@@ -132,13 +137,13 @@ public class Scene1Item : MonoBehaviour
 	Animation aCarpet;
 	Animation aAds;
 	Animation aArrow;
+	Animation aKnife;
 
 	// 初始化
 	void Start()
 	{
 		mInstance = this;
-
-		Router.guideClear = true;
+        
 		//初始化时装载音频
 		recordAudio = pho.GetComponent<AudioSource>();
 		recordClip = pho.GetComponent<AudioSource>().clip;
@@ -150,6 +155,11 @@ public class Scene1Item : MonoBehaviour
 		SE = chair.GetComponent<AudioSource>();
 		chairClip = chair.GetComponent<AudioSource>().clip;
 		carpetClip = carpetActive.transform.GetComponent<AudioSource>().clip;
+		lampClip = lamp.GetComponent<AudioSource>().clip;
+		knifeClip = poster.GetComponent<AudioSource>().clip;
+		envelopClip = envelopObj.GetComponent<AudioSource>().clip;
+		bookClip = books.GetComponent<AudioSource>().clip;
+		bedClip = bed.transform.GetComponent<AudioSource>().clip;
 
 		BGMAudio.Play();
 
@@ -161,14 +171,18 @@ public class Scene1Item : MonoBehaviour
 		aCarpet = carpetActive.transform.GetComponent<Animation>();
 		aAds = smallAdsObj.transform.GetComponent<Animation>();
 		aArrow = arrowR.transform.GetComponent<Animation>();
+		aKnife = knifeObj.transform.GetComponent<Animation>();
         
-		if (Router.guideClear == false)
-		{
-			arrowR.SetActive(false);
-			guideMaskA.SetActive(true);
-			guideMaskB.SetActive(true);
-			guideMaskC.SetActive(true);
-		}
+	}
+
+	public void aKnife_()
+	{
+		aKnife.Play();
+		SE.PlayOneShot(knifeClip);
+	}
+
+	public void PlaySound(AudioClip clip){
+		SE.PlayOneShot(clip);
 	}
 
 	//获得道具的操作
@@ -226,6 +240,7 @@ public class Scene1Item : MonoBehaviour
     //点击书本
 	public void OnBooks()
 	{
+		SE.PlayOneShot(bookClip);
 		textTempTIme = 0;
 		_OnBooks++;
 
@@ -277,6 +292,7 @@ public class Scene1Item : MonoBehaviour
 
 		if (_OnBooks == 4)
 		{
+			SE.PlayOneShot(envelopClip);
 			GoodsClickInfo.mInstance.SetText("我们有救了");
 			adsObj.SetActive(true);
 		}
@@ -365,6 +381,7 @@ public class Scene1Item : MonoBehaviour
 	//点击灯
 	public void OnLamp()
 	{
+		SE.PlayOneShot(lampClip);
 		textTempTIme = 0;
 		_lamp++;
 
@@ -406,6 +423,7 @@ public class Scene1Item : MonoBehaviour
 		switch (count)
         {
             case 1:
+				SE.PlayOneShot(bedClip);
                 GoodsClickInfo.mInstance.SetText("我困了……");
                 break;
             case 2:
@@ -734,6 +752,7 @@ public class Scene1Item : MonoBehaviour
 			keyhole.SetActive(false);
 			keyholeActive.SetActive(true);
 			envelopObj.SetActive(true);
+			smallKeyObj.SetActive(false);
 			Router.keyUsed = true;
 			useSuccess = true;
 		}
@@ -753,7 +772,7 @@ public class Scene1Item : MonoBehaviour
 			dresser.SetActive(false);
 			dresserActive.SetActive(true);
 			GoodsClickInfo.mInstance.SetText("我给你的留言！");
-			//这里要播放音乐
+			smallCdObj.SetActive(false);
 			BGMAudio.Pause();
 			recordAudio.PlayOneShot(recordClip);
 			useSuccess = true;
@@ -836,12 +855,17 @@ public class Scene1Item : MonoBehaviour
 				keyholeActive.SetActive(true);
 			}
 			Router.isLoaded = false;
+			Router.forGame = false;
 		}
 	}
 
 	//新手教程
 	private void guide() {
 		_guideCountTime += Time.deltaTime;
+		guideMaskC.SetActive(true);
+		guideMaskB.SetActive(true);
+		guideMaskA.SetActive(true);
+		arrowR.SetActive(false);
 		switch (_guideCount) {
 			case 0:
 				GoodsClickInfo.mInstance.SetText("这是普通的一天，你从家中醒来，没有任何不对劲。");
@@ -982,6 +1006,34 @@ public class Scene1Item : MonoBehaviour
 				Router.mInstance.DataSave();
 				_OnBooks = 5;
 				break;
+			case 31:
+				GoodsClickInfo.mInstance.SetText("我靠你竟然找到了我！");
+				guidePush(3f);
+				break;
+			case 32:
+				GoodsClickInfo.mInstance.SetText("好吧好吧，这次就放过你。");
+				guidePush(3f);
+				break;
+			case 33:
+				GoodsClickInfo.mInstance.SetText("老大什么时候让别人知道我在这里了…");
+				guidePush(3f);
+				break;
+			case 34:
+				GoodsClickInfo.mInstance.SetText("走好！");
+				aGuide.Stop();
+				//eGuide.Stop();
+				dGuide.Stop();
+				aAds.Stop();
+				desk.GetComponent<RectTransform>().localScale = new Vector2(1f, 1f);
+				arrowR.GetComponent<RectTransform>().localScale = new Vector2(1f, 1f);
+				books.GetComponent<RectTransform>().localScale = new Vector2(1f, 1f);
+				guideMaskA.SetActive(false);
+				guideMaskB.SetActive(false);
+				guideMaskC.SetActive(false);
+				_OnBooks = 0;
+				guidePush(3f);
+				Router.guideClear = true;
+				break;
 			default:
 				break;
 		}
@@ -1001,6 +1053,11 @@ public class Scene1Item : MonoBehaviour
 		}
 	}
 
+	public void guidePass(){
+		if (_guideCount < 30)
+			_guideCount = 31;
+	}
+
 	// Update is called once per frame
 	void Update()
     {
@@ -1013,6 +1070,8 @@ public class Scene1Item : MonoBehaviour
 		}
 
         selectingItem_();
+
+		if(Router.forGame)
 		ResetPosInfo();
 
         //BGM停止后重新播放

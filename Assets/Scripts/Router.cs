@@ -125,7 +125,6 @@ public class Router : MonoBehaviour
 
 		if (diaNum2nd)
 		{
-			Scene2Manager.mInstance.ringBoard.SetActive(true);
 			if (cameraUsed)
 			{
 				TR2.SetActive(true);
@@ -328,6 +327,7 @@ public class Router : MonoBehaviour
 				forGame = false;
 			}
 			else if (forHistory) {
+				history.mInstance.forHistory();
 				forHistory = false;
             } else {
 				SceneLoading.mInstance.LoadNewScene();

@@ -331,6 +331,8 @@ public class Scene2Manager : MonoBehaviour
 		else if (selectingItem != nullObj)
 		{
 			useFailed = true;
+		} else if (selectingItem == smallCameraObj) {
+			
 		}
 	}
 
@@ -349,16 +351,14 @@ public class Scene2Manager : MonoBehaviour
 		{
 			//播放声效与动画
 			flash.SetActive(true);
-			smallPhotoObj.SetActive(true);
 			flash_.Play();
 			holy.SetActive(false);
 			SE.PlayOneShot(cameraClip);
-			SetpropPos.mInstance.SetPos(smallPhotoObj);
-			Destroy(smallCameraObj);
 			GoodsClickInfo.mInstance.SetText("看看我们的照片吧！");
 			Router.photo = true;
 			Router.cameraUsed = true;
 			tempTextTime = 0;
+			SetpropPos.mInstance.SetPos(smallPhotoObj);
 			useSuccess = true;
 		} else if (selectingItem != nullObj){
 			useFailed = true;
@@ -438,6 +438,7 @@ public class Scene2Manager : MonoBehaviour
 			if (Router.card){
 				SetpropPos.mInstance.SetPos(smallCardObj);
 				brick.SetActive(false);
+				cardObj.SetActive(false);
 				gotCard();
 			}
 			if (Router.knife2Used){
@@ -455,6 +456,7 @@ public class Scene2Manager : MonoBehaviour
 				snowman.SetActive(false);
 				cameraObj.SetActive(false);
 				snowmanActive.SetActive(true);
+				SetpropPos.mInstance.SetPos(smallCameraObj);
 				gotCamera();
 			}
 			if (Router.cameraUsed) 
@@ -464,6 +466,7 @@ public class Scene2Manager : MonoBehaviour
 				holy.SetActive(false);
 			}
 			Router.isLoaded = false;
+			Router.forGame = false;
 		}
 	}
 
@@ -583,7 +586,8 @@ public class Scene2Manager : MonoBehaviour
 	{
 		tempTextTime += Time.deltaTime;
 
-		ResetPosInfo();
+		if(Router.forGame)
+		    ResetPosInfo();
 
 		if (i == 3)
 		{
