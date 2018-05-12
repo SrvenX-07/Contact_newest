@@ -73,8 +73,9 @@ public class Scene2Manager : MonoBehaviour
 	AudioClip Hallelu;
 	AudioClip sadFaceClip;
 	AudioClip cut;
+	AudioClip cameraClip;
 
-	AudioSource SE;
+	AudioSource SE;   
 
 	public GameObject BGM;
 	AudioSource BGMAudio;
@@ -87,6 +88,7 @@ public class Scene2Manager : MonoBehaviour
 	private int c = 0;
 	private int _halleluCount;
 	private int _falsh;
+	private float tempTextTime;
 
 	//选择计数器
 	public int _knifeSelCount;
@@ -151,30 +153,35 @@ public class Scene2Manager : MonoBehaviour
 	{
 		ring = true;
 		Router.ring = ring;
+		tempTextTime = 0;
 	}
 
 	public void gotCard()
 	{
 		card = true;
 		Router.card = card;
+		tempTextTime = 0;
 	}
 
 	public void gotKnife()
 	{
 		knife = true;
 		Router.knife2 = knife;
+		tempTextTime = 0;
 	}
 
 	public void gotCamera()
 	{
 		_camera = true;
 		Router._camera = _camera;
+		tempTextTime = 0;
 	}
 
 	public void gotPhoto()
 	{
 		photo = true;
 		Router.photo = photo;
+		tempTextTime = 0;
 	}
 
 	//道具选择的操作
@@ -183,6 +190,12 @@ public class Scene2Manager : MonoBehaviour
 		_knifeSelCount++;
 		select_(smallKnifeObj);
 		GoodsClickInfo.mInstance.SetText("我知道你很喜欢划烂东西发出的声音。");
+        //智障重置法二号机
+        _cardSelCount = 0;
+        _ringSelCount = 0;
+        _cameraSelCount = 0;
+        _photoSelCount = 0;
+		tempTextTime = 0;
 	}
 
 	public void selectCard()
@@ -190,6 +203,11 @@ public class Scene2Manager : MonoBehaviour
 		_cardSelCount++;
 		select_(smallCardObj);
 		GoodsClickInfo.mInstance.SetText("除了打电话，电话卡用来收藏也挺好的。");
+		_knifeSelCount = 0;
+        _ringSelCount = 0;
+        _cameraSelCount = 0;
+        _photoSelCount = 0;
+		tempTextTime = 0;
 	}
 
 	public void selectRing()
@@ -197,6 +215,11 @@ public class Scene2Manager : MonoBehaviour
 		_ringSelCount++;
 		select_(smallRingObj);
 		GoodsClickInfo.mInstance.SetText("他太吵了，我宁愿把他挂在那里。");
+		_knifeSelCount = 0;
+        _cardSelCount = 0;
+        _cameraSelCount = 0;
+        _photoSelCount = 0;
+		tempTextTime = 0;
 	}
 
 	public void selectCamera()
@@ -204,12 +227,22 @@ public class Scene2Manager : MonoBehaviour
         _cameraSelCount++;
 		select_(smallCameraObj);
 		GoodsClickInfo.mInstance.SetText("拍张我们的合照吧，就算我不会出现，拜托。");
+		_knifeSelCount = 0;
+        _cardSelCount = 0;
+        _ringSelCount = 0;
+        _photoSelCount = 0;
+		tempTextTime = 0;
     }
 
 	public void selectPhoto(){
 		_photoSelCount++;
 		select_(smallPhotoObj);
 		GoodsClickInfo.mInstance.SetText("当时你可真紧张。");
+		_knifeSelCount = 0;
+        _cardSelCount = 0;
+        _ringSelCount = 0;
+        _cameraSelCount = 0;
+		tempTextTime = 0;
 	}
 
 
@@ -272,10 +305,11 @@ public class Scene2Manager : MonoBehaviour
 			phoneBookActive.SetActive(true);
 			Router.knife2Used = true;
 			SE.PlayOneShot(cut);
+			tempTextTime = 0;
 			//播放声音
 			useSuccess = true;
 		}
-		else
+		else if (selectingItem != nullObj)
 		{
 			useFailed = true;
 		}
@@ -292,8 +326,9 @@ public class Scene2Manager : MonoBehaviour
 			arrowR.SetActive(true);
 			Router.ringUsed = true;
 			useSuccess = true;
+			tempTextTime = 0;
 		}
-		else
+		else if (selectingItem != nullObj)
 		{
 			useFailed = true;
 		}
@@ -317,13 +352,15 @@ public class Scene2Manager : MonoBehaviour
 			smallPhotoObj.SetActive(true);
 			flash_.Play();
 			holy.SetActive(false);
+			SE.PlayOneShot(cameraClip);
 			SetpropPos.mInstance.SetPos(smallPhotoObj);
 			Destroy(smallCameraObj);
 			GoodsClickInfo.mInstance.SetText("看看我们的照片吧！");
 			Router.photo = true;
 			Router.cameraUsed = true;
+			tempTextTime = 0;
 			useSuccess = true;
-		} else {
+		} else if (selectingItem != nullObj){
 			useFailed = true;
 		}
 	}
@@ -336,8 +373,9 @@ public class Scene2Manager : MonoBehaviour
 			doo.SetActive(true);
 			audioDoo.PlayOneShot(clipDoo);
 			useSuccess = true;
+			tempTextTime = 0;
 		}
-		else
+		else if (selectingItem != nullObj)
 		{
 			useFailed = true;
 		}
@@ -354,8 +392,9 @@ public class Scene2Manager : MonoBehaviour
 			Router.teleCardUsed = true;
 			Destroy(smallCardObj);
 			useSuccess = true;
+			tempTextTime = 0;
 		}
-		else
+		else if (selectingItem != nullObj)
 		{
 			useFailed = true;
 		}
@@ -431,6 +470,7 @@ public class Scene2Manager : MonoBehaviour
     //点击圣光
 	public void OnHoly(){
 		_halleluCount++;
+		tempTextTime = 0;
 		int count = Random.Range(1, 3);
 		switch (count)
 		{
@@ -454,6 +494,7 @@ public class Scene2Manager : MonoBehaviour
     //点击拨号盘
 	public void OnNumPad(){
 		int count = Random.Range(1, 2);
+		tempTextTime = 0;
 		switch(count) {
 			case 1:
 				GoodsClickInfo.mInstance.SetText("你想好要打谁的电话了吗。");
@@ -469,6 +510,7 @@ public class Scene2Manager : MonoBehaviour
     //点击拨号盘
 	public void OnCellPhone(){
 		int count = Random.Range(1, 3);
+		tempTextTime = 0;
         switch (count)
         {
             case 1:
@@ -485,6 +527,7 @@ public class Scene2Manager : MonoBehaviour
     //点击雪人
 	public void OnSnowMan(){
 		int count = Random.Range(1, 4);
+		tempTextTime = 0;
 		switch (count)
 		{
 			case 1:
@@ -504,6 +547,7 @@ public class Scene2Manager : MonoBehaviour
 
     //点击电话本体
 	public void OnPhone(){
+		tempTextTime = 0;
 		GoodsClickInfo.mInstance.SetText("你应该打个电话给我的。");
 	}
 
@@ -527,6 +571,7 @@ public class Scene2Manager : MonoBehaviour
 		snowMan = knifeObj.GetComponent<AudioSource>().clip;
 		sadFaceClip = glass.GetComponent<AudioSource>().clip;
 		cut = booth.GetComponent<AudioSource>().clip;
+		cameraClip = teleHouse.GetComponent<AudioSource>().clip;
 
 		flash_ = flash.transform.GetComponent<Animation>();
 
@@ -536,6 +581,8 @@ public class Scene2Manager : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
+		tempTextTime += Time.deltaTime;
+
 		ResetPosInfo();
 
 		if (i == 3)
@@ -553,10 +600,11 @@ public class Scene2Manager : MonoBehaviour
 		if (BGMAudio.isPlaying == false)
 			BGMAudio.Play();
 
-		if (tempTime >= textTime)
-		{
-			GoodsClickInfo.mInstance.SetText(null);
-		}
+		if (tempTextTime>= textTime)
+        {
+            GoodsClickInfo.mInstance.SetText(null);
+			tempTextTime = 0;
+        }
 
 		Transmision();
 	}
@@ -565,6 +613,7 @@ public class Scene2Manager : MonoBehaviour
 	public void OnRing()
 	{
 		audioRing.PlayOneShot(clipRing);
+		tempTextTime = 0;
 		int a = Random.Range(1, 3);
 		switch (a){
 			case 1:
@@ -582,6 +631,7 @@ public class Scene2Manager : MonoBehaviour
     //点击电话亭内部
 	public void OnBooth()
     {
+		tempTextTime = 0;
         int a = Random.Range(1, 3);
         switch (a)
         {
@@ -599,6 +649,7 @@ public class Scene2Manager : MonoBehaviour
 
     //点击电话本
 	public void OnPhoneBook(){
+		tempTextTime = 0;
 		d ++;
 		switch (d)
 		{
@@ -619,6 +670,7 @@ public class Scene2Manager : MonoBehaviour
 
 	public void OnDoo()
 	{
+		tempTextTime = 0;
 		audioDoo.PlayOneShot(clipDoo);
 
 	}
@@ -626,6 +678,7 @@ public class Scene2Manager : MonoBehaviour
 	public void Transmision(){
 		if (c >= 1)
 		{
+			tempTextTime = 0;
 			ringTime += Time.deltaTime;
 			if (ringTime >= 2f)
 				audioRing.PlayOneShot(clipRing);

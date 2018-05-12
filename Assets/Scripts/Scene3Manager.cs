@@ -81,17 +81,19 @@ public class Scene3Manager : MonoBehaviour
 	private int _gifG;
     private int error = 0;
     private int music = 0;
+	private float tempTextTime;
 
     //选择计数器
-    public int _myCompSelCount = 0;
-    public int _jpgSelCount = 0;
-    public int _pngSelCount = 0;
-    public int _favSelCount = 0;
-    public int _dolphSelCount = 0;
+    public int _myCompSelCount;
+    public int _jpgSelCount;
+    public int _pngSelCount;
+    public int _favSelCount;
+    public int _dolphSelCount;
 
     //中继
     public GameObject selectingItem;
     public GameObject lastSelectItem;
+	public GameObject lastLastSelectItem;
     public bool useSuccess = false;
     public bool useFailed = false;
 
@@ -123,6 +125,10 @@ public class Scene3Manager : MonoBehaviour
             _lastScale(lastSelectItem);
         lastSelectItem = selectingItem;
         tempTime = 0;
+		tempTextTime = 0;
+		if (lastLastSelectItem == lastSelectItem == selectingItem)
+			_lastScale(_object);
+		lastLastSelectItem = lastSelectItem;
     }
 
     private int _initSelf(int count)
@@ -150,30 +156,35 @@ public class Scene3Manager : MonoBehaviour
     {
 		myComp = true;
 		Router.myComp = myComp;
+		tempTextTime = 0;
     }
 
     public void gotJpg()
     {
         jpg = true;
 		Router.jpg = jpg;
+		tempTextTime = 0;
     }
 
     public void gotPng()
     {
         png = true;
 		Router.png = png;
+		tempTextTime = 0;
     }
 
     public void gotFav()
     {
         fav = true;
 		Router.fav = fav;
+		tempTextTime = 0;
     }
 
     public void gotDolph()
     {
         dolph = true;
 		Router.dolph = dolph;
+		tempTextTime = 0;
     }
 
     //道具选择的操作
@@ -181,30 +192,56 @@ public class Scene3Manager : MonoBehaviour
     {
         _myCompSelCount++;
         select_(smallMyCompObj);
+		GoodsClickInfo.mInstance.SetText("全都是隐私，我得小心点。");
+        //智障重置法2号机
+        _jpgSelCount = 0;
+        _pngSelCount = 0;
+        _favSelCount = 0;
+        _dolphSelCount = 0;
     }
 
     public void selectPng()
     {
         _pngSelCount++;
         select_(smallPngObj);
+		GoodsClickInfo.mInstance.SetText("这是海豚的小姑娘吗？");
+		_myCompSelCount = 0;
+        _jpgSelCount = 0;
+        _favSelCount = 0;
+        _dolphSelCount = 0;
     }
 
     public void selectJpg()
     {
         _jpgSelCount++;
         select_(smallJpgObj);
+		GoodsClickInfo.mInstance.SetText("这是海豚的小姑娘吗？");
+		_myCompSelCount = 0;
+        _pngSelCount = 0;
+        _favSelCount = 0;
+        _dolphSelCount = 0;
     }
 
     public void selectFav()
     {
         _favSelCount++;
         select_(smallFavObj);
+		GoodsClickInfo.mInstance.SetText("不知道艾米会不会喜欢这颗星星。");
+		_myCompSelCount = 0;
+        _jpgSelCount = 0;
+        _pngSelCount = 0;
+        _dolphSelCount = 0;
     }
 
     public void selectDolph()
     {
         _dolphSelCount++;
         select_(smallDolphObj);
+		GoodsClickInfo.mInstance.SetText("他说他会帮我解决问题。");
+		_myCompSelCount = 0;
+        _jpgSelCount = 0;
+        _pngSelCount = 0;
+        _favSelCount = 0;
     }
 
     //处理被选择物件
@@ -233,16 +270,26 @@ public class Scene3Manager : MonoBehaviour
         }
 
         //智障重置法1号
-        if (_myCompSelCount >= 2)
+		if (_myCompSelCount >= 2)
+        {
             useFailed = true;
-        if (_pngSelCount >= 2)
+        }
+		if (_pngSelCount >= 2)
+        {
             useFailed = true;
-        if (_jpgSelCount >= 2)
+        }
+		if (_jpgSelCount >= 2)
+        {
             useFailed = true;
-        if (_favSelCount >= 2)
+        }
+		if (_favSelCount >= 2)
+        {
             useFailed = true;
-        if (_dolphSelCount >= 2)
+        }
+		if (_dolphSelCount >= 2)
+        {
             useFailed = true;
+        }
 
         _selectScale(selectingItem);
     }
@@ -255,6 +302,7 @@ public class Scene3Manager : MonoBehaviour
             Destroy(ErrNotFound);
             //播放声音
             useSuccess = true;
+			tempTextTime = 0;
         }
         else
         {
@@ -270,8 +318,12 @@ public class Scene3Manager : MonoBehaviour
             arrowL.SetActive(false);
             arrowR.SetActive(false);
             Router.dolphUsed = true;
+			GoodsClickInfo.mInstance.SetText("再见，谢谢您的慷慨和隐私！");
             useSuccess = true;
-        }
+			tempTextTime = 0;
+		} else {
+			useFailed = true;
+		}
 
         if (selectingItem == smallFavObj)
         {
@@ -280,6 +332,7 @@ public class Scene3Manager : MonoBehaviour
             arrowR.SetActive(false);
             Router.favUsed = true;
             useSuccess = true;
+			tempTextTime = 0;
         } else {
             useFailed = true;
         }
@@ -292,6 +345,7 @@ public class Scene3Manager : MonoBehaviour
             Destroy(musicFile);
             BGMWrongAudio.Pause();
             useSuccess = true;
+			tempTextTime = 0;
         } else {
             useFailed = true;
         }
@@ -305,14 +359,18 @@ public class Scene3Manager : MonoBehaviour
 			{
 				dolphIcon.SetActive(false);
 				dolphObj.SetActive(true);
+				GoodsClickInfo.mInstance.SetText("感谢您的慷慨！");
 				useSuccess = true;
-			} else {
+				tempTextTime = 0;
+			} else if (selectingItem != nullObj){
 				GoodsClickInfo.mInstance.SetText("哦，我暂时不需要它。");
 				useFailed = true;
+				tempTextTime = 0;
 			}
-		} else {
+		} else if (selectingItem != nullObj) {
 			useFailed = true;
 			GoodsClickInfo.mInstance.SetText("哦，我暂时不需要它。");
+			tempTextTime = 0;
 		}
 
         if(selectingItem == smallJpgObj)
@@ -323,7 +381,8 @@ public class Scene3Manager : MonoBehaviour
 			Router.jpgUsed = true;
 			GoodsClickInfo.mInstance.SetText("好久不见！");
             useSuccess = true;
-		} else {
+			tempTextTime = 0;
+		} else if (selectingItem != nullObj) {
             useFailed = true;
         }
 
@@ -333,7 +392,8 @@ public class Scene3Manager : MonoBehaviour
             Destroy(smallJpgObj);
 			Router.gifUsed = true;
             useSuccess = true;
-        } else {
+			tempTextTime = 0;
+		} else if (selectingItem != nullObj) {
             useFailed = true;
         }
     }
@@ -346,7 +406,8 @@ public class Scene3Manager : MonoBehaviour
             Destroy(ErrorClip);
             GoodsClickInfo.mInstance.SetText("我会帮助你！");
             useSuccess = true;
-        } else {
+			tempTextTime = 0;
+		} else if (selectingItem != nullObj) {
             useFailed = true;
         }
     }
@@ -374,6 +435,8 @@ public class Scene3Manager : MonoBehaviour
 
 		if(Router.dolph)
 			GoodsClickInfo.mInstance.SetText("可真烦人不是吗？不过我会帮您的。");
+
+		tempTextTime = 0;
     }
 
     public void OnMusicFile()
@@ -397,12 +460,16 @@ public class Scene3Manager : MonoBehaviour
 
 		if (Router.dolph)
             GoodsClickInfo.mInstance.SetText("来为派对预热一下吧！");
+
+		tempTextTime = 0;
     }
 
     public void OnNotFoundButton(){
         ErrorAudio.PlayOneShot(ErrorClip);
         ErrNotFound.SetActive(false);
         NotFoundTime = 0;
+
+		tempTextTime = 0;
     }
 
     public void OnDolphin()
@@ -436,6 +503,8 @@ public class Scene3Manager : MonoBehaviour
 
 		if (Router.comUsed)
 			GoodsClickInfo.mInstance.SetText("您可真是位绅士，我会尽我所能的帮助你，带我走吧。");
+		
+		tempTextTime = 0;
 			
     }
 
@@ -451,10 +520,13 @@ public class Scene3Manager : MonoBehaviour
 				break;
 			default:
 				break;
+
+				tempTextTime = 0;
 		}
 
 		if (Router.dolph)
 			GoodsClickInfo.mInstance.SetText("噢，这就是您烦恼的根源吧，让我来帮你写。");
+		tempTextTime = 0;
 	}
     
 	public void OnJpgGirl(){
@@ -571,6 +643,8 @@ public class Scene3Manager : MonoBehaviour
 	{
         tempTime += Time.deltaTime;
         NotFoundTime += Time.deltaTime;
+		tempTextTime += Time.deltaTime;
+
         selectingItem_();
         if (NotFoundTime >= 7.0f)
         {
@@ -580,13 +654,20 @@ public class Scene3Manager : MonoBehaviour
             NotFoundTime = 0;
         }
 
+		if (tempTextTime >= textTime)
+        {
+            GoodsClickInfo.mInstance.SetText(null);
+			tempTextTime = 0;
+        }
+
         //BGM停止后重新播放
         if (BGMAudio.isPlaying == false && BGMWrongAudio.isPlaying == false && startupAudio.isPlaying == false && ErrorRemixAudio.isPlaying == false)
             BGMAudio.Play();
 
-        if (tempTime >= textTime)
+		if (tempTextTime >= textTime)
         {
             GoodsClickInfo.mInstance.SetText(null);
+			tempTextTime = 0;
         }
 	}
 }

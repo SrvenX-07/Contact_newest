@@ -42,7 +42,7 @@ public class Router : MonoBehaviour
 	public static bool forStart;
 	public static bool loadFaild;
 
-	public string SceneNum = "";
+	public static string SceneNum = "";
 
 	//字幕变量
 	public static Text tips;
@@ -59,19 +59,19 @@ public class Router : MonoBehaviour
 
 	//场景2道具状态获取
 	public static List<bool> Scene2ItemStatus = new List<bool>(new bool[] { true, true, true, true, true });
-	public static bool ring = false;
-	public static bool card = false;
+	public static bool ring;
+	public static bool card;
 	public static bool _camera;
 	public static bool photo;
 	public static bool knife2 = true;
 
 	//场景3道具状态获取
 	public static List<bool> Scene3ItemStatus = new List<bool>(new bool[] { true, true, true, true, true });
-	public static bool myComp = false;
-	public static bool jpg = false;
-	public static bool png = false;
-	public static bool fav = false;
-	public static bool dolph = false;
+	public static bool myComp;
+	public static bool jpg;
+	public static bool png;
+	public static bool fav;
+	public static bool dolph;
 
 	//结局内容
 	public GameObject ED1;
@@ -84,7 +84,12 @@ public class Router : MonoBehaviour
 	public GameObject TR2;
 
 	//标题界面用
-	public GameObject Saving;
+	public GameObject LoadingButton;
+	public GameObject GameSetting;
+	private int _settingCount;
+    
+	Animation SettingFadeIn;
+	AnimationClip SettingFadeOut;
 
 
 	//结局开关
@@ -131,22 +136,27 @@ public class Router : MonoBehaviour
 			}
 		}
 
-		if (envelopUsed && favUsed)
+		if (SceneManager.GetActiveScene().name == "3-1")
 		{
-			if (cameraUsed)
+			if (envelopUsed && favUsed)
 			{
-				ED4.SetActive(true);
-				sED4 = true;
-			} else {
-				ED5.SetActive(true);
-				sED5 = true;
+				if (cameraUsed)
+				{
+					ED4.SetActive(true);
+					sED4 = true;
+				}
+				else
+				{
+					ED5.SetActive(true);
+					sED5 = true;
+				}
 			}
-		}
 
-		if (postCardUsed)
-		{
-			ED1.SetActive(true);
-			sED1 = true;
+			if (postCardUsed)
+			{
+				ED1.SetActive(true);
+				sED1 = true;
+			}
 		}
 
 		if (dolphUsed)
@@ -233,7 +243,8 @@ public class Router : MonoBehaviour
 		SaveData loadData = new SaveData();
 		loadData = JsonMapper.ToObject<SaveData>(jLoadData);
 
-		if (loadData == null) {
+		if (loadData == null)
+		{
 			loadFaild = true;
 
 		}
@@ -303,75 +314,94 @@ public class Router : MonoBehaviour
 
 		isLoaded = true;
 
-		loadEnd();
+		LoadEnd();
 	}
 
-	public void loadEnd()
+	private void LoadEnd()
 	{
 		//读取结束之后执行
 		if (isLoaded == true)
 		{
 			if (forGame)
 			{
-				SceneManager.LoadScene(SceneNum);
+				SceneLoading.mInstance.LoadNewScene();
 				forGame = false;
 			}
-			else
-			{
-				SceneManager.LoadScene("1-1");
+			else if (forHistory) {
+				forHistory = false;
+            } else {
+				SceneLoading.mInstance.LoadNewScene();
 			}
 
-			isLoaded = false;
 
-			if (forHistory)
-			{
-
-			}
 		}
 	}
 
-	public void loadForContinue() {
+	public void loadForContinue()
+	{
 		forGame = true;
 		DataLoad();
 	}
 
-	public void loadForHistory() {
+	public void loadForHistory()
+	{
 		forHistory = true;
 		DataLoad();
 	}
 
-	public void SoundOff(){
+	public void SoundOff()
+	{
 		AudioListener.volume = 0;
 	}
 
-	public void SoundOn(){
+	public void SoundOn()
+	{
 		AudioListener.volume = 1;
 	}
 
 	[System.Serializable]
-	public class SaveData {
+	public class SaveData
+	{
 		//接收Router的全局FLAG值
-        public List<bool> N1;
+		public List<bool> N1;
 
-	    //接受场景1的道具FLAG值
-	    public List<bool> N2;
+		//接受场景1的道具FLAG值
+		public List<bool> N2;
 
-	    //接受场景2的道具FLAG值
-	    public List<bool> N3;
+		//接受场景2的道具FLAG值
+		public List<bool> N3;
 
-	    //接受场景3的道具FLAG值
-	    public List<bool> N4;
+		//接受场景3的道具FLAG值
+		public List<bool> N4;
 
 		//接受结局和教程的FLAG值
 		public List<bool> N5;
 
-	    //接受存档时的场景编号
-	    public string sceneNum;
+		//接受存档时的场景编号
+		public string sceneNum;
 
 		public int gameClearTimes;
 
 		public bool isFirstTime;
-    }
+	}
+    
+	public void OnSetting(){
+		_settingCount++;
+		if (_settingCount >= 2)
+		{
+			SettingFadeIn["setting"].speed = -1f;
+			SettingFadeIn["setting"].time = SettingFadeIn["setting"].length;
+			SettingFadeIn.Play();
+			_settingCount = 0;
+		}
+		else
+		{
+			SettingFadeIn["setting"].speed = 1f;
+			SettingFadeIn["setting"].time = 0;
+			SettingFadeIn.Play();
+		}
+
+	}
 
 	// Use this for initialization
 	void Start()
@@ -390,7 +420,11 @@ public class Router : MonoBehaviour
 				File.CreateText(saveFile);
 				isFirstTime = true;
 			}
+		} else {
+			loadForHistory();
 		}
+
+		SettingFadeIn = GameSetting.GetComponent<Animation>();
 	}
 
 	// Update is called once per frame
@@ -408,11 +442,19 @@ public class Router : MonoBehaviour
 			}
 		}
 
-		if(isFirstTime || loadFaild)
+		if (isFirstTime || loadFaild)
 		{
 			DataSave();
 			loadFaild = false;
 			isFirstTime = false;
+			loadForHistory();
+		}
+
+		if (SceneManager.GetActiveScene().name == "StartScene")
+		if (SceneNum == "StartScene" || SceneNum == null)
+			LoadingButton.GetComponent<Button>().interactable = false;
+		else {
+			LoadingButton.GetComponent<Button>().interactable = true;
 		}
 	}
 }

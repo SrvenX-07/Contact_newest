@@ -543,6 +543,12 @@ public class Scene1Item : MonoBehaviour
 		_knifeSelCount++;
 		select_(smallKnifeObj);
 		GoodsClickInfo.mInstance.SetText("一把锋利的刀？小心点不要划到自己了。");
+        //智障充值法二号机
+        _keySelCount = 0;
+        _cdSelCount = 0;
+        _adsSelCount = 0;
+        _envelopSelCount = 0;
+        _postcardSelCount = 0;
 	}
 
 	public void selectKey()
@@ -550,6 +556,11 @@ public class Scene1Item : MonoBehaviour
 		_keySelCount++;
 		select_(smallKeyObj);
 		GoodsClickInfo.mInstance.SetText("我想我知道他可以打开哪里。");
+		_knifeSelCount = 0;
+        _cdSelCount = 0;
+        _adsSelCount = 0;
+        _envelopSelCount = 0;
+        _postcardSelCount = 0;
 	}
 
 	public void selectCd()
@@ -557,6 +568,11 @@ public class Scene1Item : MonoBehaviour
 		_cdSelCount++;
 		select_(smallCdObj);
 		GoodsClickInfo.mInstance.SetText("快，我们来听听里面有什么。");
+		_knifeSelCount = 0;
+        _keySelCount = 0;
+        _adsSelCount = 0;
+        _envelopSelCount = 0;
+        _postcardSelCount = 0;
 	}
 
 	public void selectAds()
@@ -564,6 +580,11 @@ public class Scene1Item : MonoBehaviour
 		_adsSelCount++;
 		select_(smallAdsObj);
 		GoodsClickInfo.mInstance.SetText("嘿，这堆信可真多。");
+		_knifeSelCount = 0;
+        _keySelCount = 0;
+        _cdSelCount = 0;
+        _envelopSelCount = 0;
+        _postcardSelCount = 0;
 	}
 
 	public void selectEnvelop()
@@ -571,6 +592,11 @@ public class Scene1Item : MonoBehaviour
 		_envelopSelCount++;
 		select_(smallEnvelopObj);
 		GoodsClickInfo.mInstance.SetText("嗯……这个信封看着很眼熟。");
+		_knifeSelCount = 0;
+        _keySelCount = 0;
+        _cdSelCount = 0;
+        _adsSelCount = 0;
+        _postcardSelCount = 0;
 	}
 
 	public void selectPostCard()
@@ -578,6 +604,11 @@ public class Scene1Item : MonoBehaviour
 		_postcardSelCount++;
 		select_(smallPostcardObj);
 		GoodsClickInfo.mInstance.SetText("当时我写的时候可紧张了。");
+		_knifeSelCount = 0;
+        _keySelCount = 0;
+        _cdSelCount = 0;
+        _adsSelCount = 0;
+        _envelopSelCount = 0;
 	}
 
 	public void _initSelf()
@@ -667,7 +698,7 @@ public class Scene1Item : MonoBehaviour
 			GoodsClickInfo.mInstance.PlayBed();
 			useSuccess = true;
 		}
-		else
+		else if (selectingItem != nullObj)
 		{
 			//这里就是除了设置以外的道具使用时的触发
 			Debug.Log("failed");
@@ -688,7 +719,7 @@ public class Scene1Item : MonoBehaviour
 			Router.knifeUsed = true;
 			useSuccess = true;
 		}
-		else
+		else if (selectingItem != nullObj)
 		{
 			useFailed = true;
 		}
@@ -706,7 +737,7 @@ public class Scene1Item : MonoBehaviour
 			Router.keyUsed = true;
 			useSuccess = true;
 		}
-		else
+		else if (selectingItem != nullObj)
 		{
 			useFailed = true;
 		}
@@ -727,7 +758,7 @@ public class Scene1Item : MonoBehaviour
 			recordAudio.PlayOneShot(recordClip);
 			useSuccess = true;
 		}
-		else
+		else if (selectingItem != nullObj)
 		{
 			useFailed = true;
 		}
@@ -749,7 +780,7 @@ public class Scene1Item : MonoBehaviour
 				aAds.Stop();
 			}			
 			useSuccess = true;
-		} else {
+		} else if (selectingItem != nullObj) {
 			useFailed = true;
 		}
 	}
