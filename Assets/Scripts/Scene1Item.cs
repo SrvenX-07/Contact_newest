@@ -37,6 +37,7 @@ public class Scene1Item : MonoBehaviour
 	public GameObject desk;
 	public GameObject books;
 	public GameObject twitter;
+	public GameObject inst;
 
 	public GameObject chair;
 
@@ -48,6 +49,8 @@ public class Scene1Item : MonoBehaviour
 
 	public GameObject curtain;
 	public GameObject curtainActive;
+	public GameObject curtainKnife;
+	public GameObject curtainKnifeActive;
 
 	public GameObject keyhole;
 	public GameObject keyholeActive;
@@ -73,6 +76,8 @@ public class Scene1Item : MonoBehaviour
 	public GameObject guideMaskC;
 
 	public GameObject arrowR;
+
+	public GameObject Setting;
 
 	//道具的获得状态
 	public bool knife;
@@ -118,6 +123,7 @@ public class Scene1Item : MonoBehaviour
 	public GameObject BGM;
 	AudioSource BGMAudio;
 	AudioClip BGMClip;
+	public AudioClip BGMActive;
 	AudioListener SystemVol;
 
 	AudioClip chairClip;
@@ -127,6 +133,10 @@ public class Scene1Item : MonoBehaviour
 	AudioClip envelopClip;
 	AudioClip bookClip;
 	AudioClip bedClip;
+	AudioClip bedClip2;
+	AudioClip knifeCurtainClip;
+	AudioClip keyClip;
+	AudioClip clothClip;
 	AudioSource SE;
 
 	// 动画资源钩子
@@ -143,6 +153,8 @@ public class Scene1Item : MonoBehaviour
 	void Start()
 	{
 		mInstance = this;
+
+		//Router.guideClear = true;
         
 		//初始化时装载音频
 		recordAudio = pho.GetComponent<AudioSource>();
@@ -152,7 +164,7 @@ public class Scene1Item : MonoBehaviour
 		BGMClip = BGM.GetComponent<AudioSource>().clip;
 		SystemVol = BGM.GetComponent<AudioListener>();
 
-		SE = chair.GetComponent<AudioSource>();
+		SE = Setting.GetComponent<AudioSource>();
 		chairClip = chair.GetComponent<AudioSource>().clip;
 		carpetClip = carpetActive.transform.GetComponent<AudioSource>().clip;
 		lampClip = lamp.GetComponent<AudioSource>().clip;
@@ -160,14 +172,17 @@ public class Scene1Item : MonoBehaviour
 		envelopClip = envelopObj.GetComponent<AudioSource>().clip;
 		bookClip = books.GetComponent<AudioSource>().clip;
 		bedClip = bed.transform.GetComponent<AudioSource>().clip;
+		bedClip2 = bedActive.transform.GetComponent<AudioSource>().clip;
+		clothClip = cdObj.transform.GetComponent<AudioSource>().clip;
+		knifeCurtainClip = inst.GetComponent<AudioSource>().clip;
 
 		BGMAudio.Play();
 
 		//装载动画
-		aGuide = books.GetComponent<Animation>();
-		eGuide = adsObj.GetComponent<Animation>();
-		dGuide = desk.GetComponent<Animation>();
-		aChair = chair.GetComponent<Animation>();
+		aGuide = books.transform.GetComponent<Animation>();
+		eGuide = adsObj.transform.GetComponent<Animation>();
+		dGuide = desk.transform.GetComponent<Animation>();
+		aChair = chair.transform.GetComponent<Animation>();
 		aCarpet = carpetActive.transform.GetComponent<Animation>();
 		aAds = smallAdsObj.transform.GetComponent<Animation>();
 		aArrow = arrowR.transform.GetComponent<Animation>();
@@ -444,7 +459,7 @@ public class Scene1Item : MonoBehaviour
 		switch (count)
 		{
 			case 1:
-				//播放上锁的声音
+				SE.PlayOneShot(keyClip);
                 GoodsClickInfo.mInstance.SetText("锁上了。");
                 break;
             case 2:
@@ -479,7 +494,7 @@ public class Scene1Item : MonoBehaviour
     //点击激活后的留声机
 	public void OnPhonoActive(){
 		textTempTIme = 0;
-		int count = UnityEngine.Random.Range(1, 4);
+		int count = UnityEngine.Random.Range(0, 4);
         switch (count)
         {
             case 1:
@@ -496,15 +511,15 @@ public class Scene1Item : MonoBehaviour
                 break;
         }
 	}
-
+    
     //点击衣服
 	public void OnCloth(){
 		textTempTIme = 0;
-		int count = UnityEngine.Random.Range(1, 4);
+		int count = UnityEngine.Random.Range(0, 4);
         switch (count)
         {
             case 1:
-                //播放上锁的声音
+				SE.PlayOneShot(clothClip);
                 GoodsClickInfo.mInstance.SetText("可真乱。");
                 break;
             case 2:
@@ -531,7 +546,7 @@ public class Scene1Item : MonoBehaviour
 	//道具选择的操作 模板
 	private void _lastScale(GameObject _object)
 	{
-		Debug.Log("_last");
+		//Debug.Log("_last");
 		_object.GetComponent<RectTransform>().transform.localScale = new Vector2(1f, 1f);
 		if (_object != nullObj)
 		    _object.transform.parent.GetChild(0).gameObject.SetActive(false);
@@ -539,7 +554,7 @@ public class Scene1Item : MonoBehaviour
 
 	private void _selectScale(GameObject _object)
 	{
-		Debug.Log("_select");
+		//Debug.Log("_select");
 		_object.GetComponent<RectTransform>().transform.localScale = new Vector2(1.2f, 1.2f);
 		if (_object != nullObj)
 		    _object.transform.parent.GetChild(0).gameObject.SetActive(true);
@@ -773,7 +788,8 @@ public class Scene1Item : MonoBehaviour
 			dresserActive.SetActive(true);
 			GoodsClickInfo.mInstance.SetText("我给你的留言！");
 			smallCdObj.SetActive(false);
-			BGMAudio.Pause();
+			BGMAudio.clip = BGMActive;
+			BGMAudio.Play();
 			recordAudio.PlayOneShot(recordClip);
 			useSuccess = true;
 		}
@@ -781,6 +797,39 @@ public class Scene1Item : MonoBehaviour
 		{
 			useFailed = true;
 		}
+	}
+
+	public void UseOnCurtain()
+	{
+		textTempTIme = 0;
+		if (selectingItem == smallKnifeObj)
+		{
+			SE.PlayOneShot(knifeCurtainClip);
+			curtain.SetActive(false);
+			curtainKnife.SetActive(true);
+			curtainActive.SetActive(false);
+			Debug.Log("111");
+			useSuccess = true;
+		}
+		else if (selectingItem == nullObj) {
+			useFailed = true;
+		}
+	}
+
+	public void UseOnCurtainActive()
+	{
+		textTempTIme = 0;
+		if (selectingItem == smallKnifeObj)
+		{
+			SE.PlayOneShot(knifeCurtainClip);
+			curtainActive.SetActive(false);
+			curtainKnifeActive.SetActive(true);
+			curtain.SetActive(false);
+			useSuccess = true;
+		} 
+		else if (selectingItem == nullObj) {
+            useFailed = true;
+        }
 	}
 
     // 对桌子使用
@@ -1021,7 +1070,7 @@ public class Scene1Item : MonoBehaviour
 			case 34:
 				GoodsClickInfo.mInstance.SetText("走好！");
 				aGuide.Stop();
-				//eGuide.Stop();
+				eGuide.Stop();
 				dGuide.Stop();
 				aAds.Stop();
 				desk.GetComponent<RectTransform>().localScale = new Vector2(1f, 1f);
@@ -1030,6 +1079,7 @@ public class Scene1Item : MonoBehaviour
 				guideMaskA.SetActive(false);
 				guideMaskB.SetActive(false);
 				guideMaskC.SetActive(false);
+				arrowR.SetActive(true);
 				_OnBooks = 0;
 				guidePush(3f);
 				Router.guideClear = true;
@@ -1097,7 +1147,18 @@ public class Scene1Item : MonoBehaviour
     }
 
 	public void arrowStop(){
-		aArrow.Stop();
-		_lastScale(arrowR);
+		bedClip = bed.transform.GetComponent<AudioSource>().clip;
+        bedClip2 = bedActive.transform.GetComponent<AudioSource>().clip;
+        clothClip = cloth.transform.GetComponent<AudioSource>().clip;
 	}
+
+    //关键部分
+    //用于将钩子等等直接传递给Router
+	public void OnSetting(){
+		Router.mInstance.OnSetting();
+	}
+	public void DataSave()
+    {
+        Router.mInstance.DataSave();
+    }
 }

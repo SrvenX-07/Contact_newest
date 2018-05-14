@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class SetTips : MonoBehaviour
 {
-    public Text MText;
+	public TextMeshProUGUI MText;
     public int music;
     public int error;
     public int dolphin;
@@ -27,8 +28,7 @@ public class SetTips : MonoBehaviour
 
     public void setTips(string content)
     {
-        MText.gameObject.SetActive(true);
-        MText.text = content;
+		MText.SetText(content);
     }
     //public void setmusicTips()
     //{

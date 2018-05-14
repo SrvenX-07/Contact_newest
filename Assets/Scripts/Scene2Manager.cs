@@ -53,6 +53,11 @@ public class Scene2Manager : MonoBehaviour
 	public GameObject arrowL;
 	public GameObject arrowR;
 
+	//传递用钩子测试
+    public GameObject TR1;
+    public GameObject TR2;
+	public GameObject ED2;
+
 	//道具获得状态
 	public bool ring;
 	public bool card;
@@ -390,7 +395,7 @@ public class Scene2Manager : MonoBehaviour
 			if(Router.knife2Used)
 			    num2.SetActive(true);
 			Router.teleCardUsed = true;
-			Destroy(smallCardObj);
+			smallCardObj.SetActive(false);
 			useSuccess = true;
 			tempTextTime = 0;
 		}
@@ -424,10 +429,16 @@ public class Scene2Manager : MonoBehaviour
 
 	}
 
+	public void CancelNum()
+	{
+		num1.SetActive(false);
+		num2.SetActive(false);
+	}
+
 	//复盘动作
 	private void ResetPosInfo()
 	{
-		if(Router.isLoaded)
+		if(Router.isLoaded && Router.forGame)
 		{
 			if (Router.ring){
 				SetpropPos.mInstance.SetPos(smallRingObj);
@@ -579,6 +590,11 @@ public class Scene2Manager : MonoBehaviour
 		flash_ = flash.transform.GetComponent<Animation>();
 
 		BGMAudio.Play();
+
+		//传递用钩子测试
+		Router.TR1 = TR1;
+		Router.TR2 = TR2;
+		Router.ED2 = ED2;
 	}
 
 	// Update is called once per frame
@@ -693,4 +709,20 @@ public class Scene2Manager : MonoBehaviour
 	{
 		c++;
 	}
+
+	//关键部分
+    //用于将钩子等等直接传递给Router
+    public void OnSetting()
+    {
+        Router.mInstance.OnSetting();
+    }
+
+	public void result(){
+		Router.mInstance.result();
+	}
+
+	public void DataSave()
+    {
+        Router.mInstance.DataSave();
+    }
 }

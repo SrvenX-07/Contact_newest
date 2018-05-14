@@ -26,6 +26,7 @@ public class Scene3Manager : MonoBehaviour
     public GameObject folerClose;
     public GameObject musicFile;
     public GameObject ErrNotFound;
+	public GameObject ErrClone;
     public GameObject mailSender;
 
     public GameObject gifGirl;
@@ -39,6 +40,10 @@ public class Scene3Manager : MonoBehaviour
     public GameObject arrowL;
     public GameObject arrowR;
 	public GameObject Scene2;
+
+	public GameObject ED1;
+	public GameObject ED3;
+	public GameObject ED4;
 
     //道具获得状态
     public bool myComp = false;
@@ -310,33 +315,44 @@ public class Scene3Manager : MonoBehaviour
         }
     }
 
-    //对邮筒使用
-    public void UseOnMailSender(){
-        if (selectingItem == smallDolphObj)
-        {
-            mail1.SetActive(true);
-            arrowL.SetActive(false);
-            arrowR.SetActive(false);
-            Router.dolphUsed = true;
-			GoodsClickInfo.mInstance.SetText("再见，谢谢您的慷慨和隐私！");
-            useSuccess = true;
-			tempTextTime = 0;
-		} else {
+	//对邮筒使用
+	public void UseOnMailSender()
+	{
+		if (Router.comUsed)
+		{
+			if (selectingItem == smallDolphObj)
+			{
+				mail1.SetActive(true);
+				arrowL.SetActive(false);
+				arrowR.SetActive(false);
+				Router.dolphUsed = true;
+				GoodsClickInfo.mInstance.SetText("再见，谢谢您的慷慨和隐私！");
+				useSuccess = true;
+				tempTextTime = 0;
+			}
+			else
+			{
+				useFailed = true;
+			}
+
+			if (selectingItem == smallFavObj)
+			{
+				mail2.SetActive(true);
+				arrowL.SetActive(false);
+				arrowR.SetActive(false);
+				Router.favUsed = true;
+				useSuccess = true;
+				tempTextTime = 0;
+			}
+			else
+			{
+				useFailed = true;
+			}
+		} else if (selectingItem != nullObj){
+			GoodsClickInfo.mInstance.SetText("你不知道该往邮件里写些什么。");
 			useFailed = true;
 		}
-
-        if (selectingItem == smallFavObj)
-        {
-            mail2.SetActive(true);
-            arrowL.SetActive(false);
-            arrowR.SetActive(false);
-            Router.favUsed = true;
-            useSuccess = true;
-			tempTextTime = 0;
-        } else {
-            useFailed = true;
-        }
-    }
+	}
 
     //对音乐文件使用
     public void UseOnMusicFile(){
@@ -359,7 +375,8 @@ public class Scene3Manager : MonoBehaviour
 			{
 				dolphIcon.SetActive(false);
 				dolphObj.SetActive(true);
-				GoodsClickInfo.mInstance.SetText("感谢您的慷慨！");
+				GoodsClickInfo.mInstance.SetText("您可真是位绅士，我会尽我所能的帮助您，带我走吧。");
+				Router.comUsed = true;
 				useSuccess = true;
 				tempTextTime = 0;
 			} else if (selectingItem != nullObj){
@@ -416,6 +433,10 @@ public class Scene3Manager : MonoBehaviour
     public void OnNotFound() {
         ErrorAudio.PlayOneShot(ErrorClip);
         winRemixCount++;
+		float x = Random.Range(1, 1920);
+		float y = Random.Range(1, 1080);
+        
+		Instantiate(ErrClone,new Vector2(x,y),Quaternion.identity,ErrNotFound.transform);
 
         error++;
         if (error == 1)
@@ -449,7 +470,7 @@ public class Scene3Manager : MonoBehaviour
         else if (music == 3)
             GoodsClickInfo.mInstance.SetText("我是说，你真的不喜欢？");
         else if (music == 4)
-            GoodsClickInfo.mInstance.SetText("这是设计师的尊严。");
+            GoodsClickInfo.mInstance.SetText("再考虑一下吧。");
         else if (music == 5)
         {
             GoodsClickInfo.mInstance.SetText("好吧好吧，我投降。");
@@ -500,15 +521,13 @@ public class Scene3Manager : MonoBehaviour
 
 		if (Router.jpgUsed)
 			OnJpgGirl();
-
-		if (Router.comUsed)
-			GoodsClickInfo.mInstance.SetText("您可真是位绅士，我会尽我所能的帮助你，带我走吧。");
 		
 		tempTextTime = 0;
 			
     }
 
 	public void OnMailSender(){
+		tempTextTime = 0;
 		GoodsClickInfo.mInstance.SetText("就像电子版的邮筒。");
 		int index = Random.Range(1, 4);
 		switch (index) {
@@ -520,8 +539,6 @@ public class Scene3Manager : MonoBehaviour
 				break;
 			default:
 				break;
-
-				tempTextTime = 0;
 		}
 
 		if (Router.dolph)
@@ -610,6 +627,8 @@ public class Scene3Manager : MonoBehaviour
 				desktopErr.SetActive(true);
 				Destroy(smallPngObj);
 			}
+
+			Router.forGame = false;
             Router.isLoaded = false;
         }
     }
@@ -636,6 +655,10 @@ public class Scene3Manager : MonoBehaviour
         dolphClip = dolphIcon.transform.GetComponent<AudioSource>().clip;
 
         startupAudio.PlayOneShot(startupClip);
+
+		Router.ED1 = ED1;
+		Router.ED3 = ED3;
+		Router.ED4 = ED4;
 	}
 
 	// Update is called once per frame
@@ -660,6 +683,9 @@ public class Scene3Manager : MonoBehaviour
 			tempTextTime = 0;
         }
 
+		if (Router.forGame)
+			ResetPosInfo();
+
         //BGM停止后重新播放
         if (BGMAudio.isPlaying == false && BGMWrongAudio.isPlaying == false && startupAudio.isPlaying == false && ErrorRemixAudio.isPlaying == false)
             BGMAudio.Play();
@@ -669,5 +695,22 @@ public class Scene3Manager : MonoBehaviour
             GoodsClickInfo.mInstance.SetText(null);
 			tempTextTime = 0;
         }
+
+		Destroy(GameObject.Find("error(clone)"), 5f);
+			
+	}
+
+	public void OnSetting()
+    {
+        Router.mInstance.OnSetting();
+    }
+
+    public void result()
+    {
+        Router.mInstance.result();
+    }
+
+	public void DataSave(){
+		Router.mInstance.DataSave();
 	}
 }

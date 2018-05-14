@@ -58,11 +58,43 @@ public class RouterInitia : MonoBehaviour
 		//gameClear 状态
 		Router.gameClear = false;
 		Router.guideClear = false;
-
-		if (Router.gameClearTimes >= 1)
-			Router.guideClear = true;
+		//Router.forStart = true;
         
         //清空游戏主体内容进度
 		Router.mInstance.DataSave();
     }
+    
+	public void InitEveryThing(){
+		//清空所有的Router之后读档
+		RouterInit();
+
+		Router.sED1 = false;
+		Router.sED2 = false;
+		Router.sED3 = false;
+		Router.sED4 = false;
+		Router.sED5 = false;
+
+		Router.gameClearTimes = 0;
+
+		Router.SceneNum = "StartScene";
+
+		Router.mInstance.DataSave();
+		Router.mInstance.loadForHistory();
+	}
+
+	public void Loading(){
+		Router.mInstance.loadForContinue();
+	}
+
+	public void LoadForHistory(){
+		Router.mInstance.loadForHistory();
+	}
+
+	public void SoundOn(){
+		Router.mInstance.SoundOn();
+	}
+
+	public void SoundOff(){
+		Router.mInstance.SoundOff();
+	}
 }

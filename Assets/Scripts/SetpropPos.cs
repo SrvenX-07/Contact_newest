@@ -35,7 +35,6 @@ public class SetpropPos : MonoBehaviour
 		SE.PlayOneShot(getItem);
         for (int i = 0; i < PropGameObjects.Length; i++)
         {
-            Debug.Log(PropGameObjects[i].transform.childCount);
             if (PropGameObjects[i].transform.childCount == 1)
             {
                 go.transform.SetParent(PropGameObjects[i].transform);

@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class GoodsClickInfo : MonoBehaviour
 {
 
-    public  List<string> info=new List<string>(); 
-    public Text TipsText;
+    public List<string> info=new List<string>(); 
+	public TextMeshProUGUI TipsText;
     public int desknum;
     public int phonographNum;
     public int phonebokkNum;
@@ -50,7 +51,8 @@ public class GoodsClickInfo : MonoBehaviour
     void Start ()
     {
         mInstance = this;
-        if (PosterButton != null)
+
+		if (PosterButton != null)
         {
             audioPoster= PosterButton.GetComponent<AudioSource>();
             clipPoster= PosterButton.GetComponent<AudioSource>().clip;
@@ -59,8 +61,8 @@ public class GoodsClickInfo : MonoBehaviour
         {
             audioBed = bedButton.GetComponent<AudioSource>();
             clipBed = bedButton.GetComponent<AudioSource>().clip;
+        
         }
-
         if (CurtainButton != null)
         {
             audiocurtain = CurtainButton.GetComponent<AudioSource>();
@@ -76,22 +78,18 @@ public class GoodsClickInfo : MonoBehaviour
             audioCD = CDButton.GetComponent<AudioSource>();
             clipCD = CDButton.GetComponent<AudioSource>().clip;
         }
-        if (DresserButton != null)
-        {
-            audioDresser = DresserButton.GetComponent<AudioSource>();
-            clipDresser = DresserButton.GetComponent<AudioSource>().clip;
-        }
         if (KeyButton != null)
         {
             audiokey = KeyButton.GetComponent<AudioSource>();
             clipkey = KeyButton.GetComponent<AudioSource>().clip;
         }
-        if (RoadButton != null)
-        {
-            Debug.Log("road enter");
-            audioRoad =RoadButton.GetComponent<AudioSource>();
-            clipRoad = RoadButton.GetComponent<AudioSource>().clip;
-        }
+		if (RoadButton != null)
+		{
+			Debug.Log("road enter");
+			audioRoad = RoadButton.GetComponent<AudioSource>();
+			clipRoad = RoadButton.GetComponent<AudioSource>().clip;
+
+		}
     }
 
     // Update is called once per frame
@@ -148,13 +146,13 @@ public class GoodsClickInfo : MonoBehaviour
 
     public void OnKey()
     {
-        audiokey.PlayOneShot(clipkey);
+        //audiokey.PlayOneShot(clipkey);
         TipsText.text = "噢，是⼀把钥匙，会打开哪⾥呢？";
     }
 
     public void SetText(string content)
     {
-        TipsText.text = content;
+		TipsText.SetText(content);
     }
 
     public void OnCD()

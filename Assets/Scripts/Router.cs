@@ -41,6 +41,7 @@ public class Router : MonoBehaviour
 	public static bool forHistory;
 	public static bool forStart;
 	public static bool loadFaild;
+	public static bool isOnly;
 
 	public static string SceneNum = "";
 
@@ -74,22 +75,27 @@ public class Router : MonoBehaviour
 	public static bool dolph;
 
 	//结局内容
-	public GameObject ED1;
-	public GameObject ED2;
-	public GameObject ED3;
-	public GameObject ED4;
-	public GameObject ED5;
-
-	public GameObject TR1;
-	public GameObject TR2;
+	public static GameObject ED1;
+	public static GameObject ED2;
+	public static GameObject ED3;
+	public static GameObject ED4;
+	public static GameObject ED5;
+    
+	public static GameObject TR1;
+	public static GameObject TR2;
+	public GameObject TR3;
+	public GameObject TR4;
 
 	//标题界面用
-	public GameObject LoadingButton;
-	public GameObject GameSetting;
+	public static GameObject LoadingButton;
+	public static GameObject GameSetting;
+	public static GameObject SE;
 	private int _settingCount;
     
-	Animation SettingFadeIn;
+	public static Animation SettingFadeIn;
 	AnimationClip SettingFadeOut;
+
+	AudioSource SESource;
 
 
 	//结局开关
@@ -116,52 +122,60 @@ public class Router : MonoBehaviour
 
 	//结局控制
 	public void result()
-	{
-		if (diaNum1st)
+	{      
+		Debug.Log("cameraUsed" + Router.cameraUsed);
+		Debug.Log("favUsed" + Router.favUsed);
+		Debug.Log("envelopUsed" + Router.envelopUsed);
+		if (SceneManager.GetActiveScene().name == "2-1")
 		{
-			ED2.SetActive(true);
-			sED2 = true;
-		}
-
-		if (diaNum2nd)
-		{
-			if (cameraUsed)
+			if (diaNum1st)
 			{
-				TR2.SetActive(true);
+				ED2.SetActive(true);
+				sED2 = true;
 			}
-			else
+
+			if (diaNum2nd)
 			{
-				TR1.SetActive(true);
+				if (cameraUsed)
+				{
+					TR2.SetActive(true);
+				}
+				else
+				{
+					TR1.SetActive(true);
+				}
 			}
 		}
 
 		if (SceneManager.GetActiveScene().name == "3-1")
 		{
-			if (envelopUsed && favUsed)
-			{
-				if (cameraUsed)
-				{
-					ED4.SetActive(true);
-					sED4 = true;
-				}
-				else
-				{
-					ED5.SetActive(true);
-					sED5 = true;
-				}
-			}
-
 			if (postCardUsed)
 			{
 				ED1.SetActive(true);
 				sED1 = true;
 			}
-		}
 
-		if (dolphUsed)
-		{
-			ED3.SetActive(true);
-			sED3 = true;
+			if (envelopUsed)
+			{
+				if (favUsed)
+					if (cameraUsed)
+					{
+						//ED5.SetActive(true);
+					    SceneLoading.mInstance.LoadNewSceneWithName("TrueEnding");
+						sED5 = true;
+					}
+					else
+					{
+						ED4.SetActive(true);
+						sED4 = true;
+					}
+			}
+         
+			if (dolphUsed)
+			{
+				ED3.SetActive(true);
+				sED3 = true;
+			}
 		}
 		DataSave();
 	}
@@ -176,6 +190,8 @@ public class Router : MonoBehaviour
 
 	public void DataSave()
 	{
+
+		Debug.Log("Start Saving.");
 		isSaving = true;
 
 		SaveData saveData = new SaveData();
@@ -223,6 +239,8 @@ public class Router : MonoBehaviour
 		saveData.N4 = Scene3ItemStatus;
 		saveData.N5 = EndingStatus;
 		saveData.sceneNum = SceneManager.GetActiveScene().name;
+		if (SceneManager.GetActiveScene().name == "TrueEnding")
+			saveData.sceneNum = "StartScene";
 		saveData.gameClearTimes = gameClearTimes;
 
 		//写入
@@ -230,6 +248,7 @@ public class Router : MonoBehaviour
 		streamWriter.Write(jSaveData);
 		streamWriter.Close();
 
+		Debug.Log("Saved.");
 		isSaving = false;
 	}
 
@@ -244,7 +263,7 @@ public class Router : MonoBehaviour
 
 		if (loadData == null)
 		{
-			loadFaild = true;
+			Debug.Log("Load Faild");
 
 		}
 
@@ -264,7 +283,7 @@ public class Router : MonoBehaviour
 		photo = loadData.N3[3];
 		knife2 = loadData.N3[4];
 		Debug.Log("场景2FLAG");
-		Debug.Log(ring);
+		//Debug.Log(ring);
 
 		//手动写入场景3的flag
 		myComp = loadData.N4[0];
@@ -324,18 +343,24 @@ public class Router : MonoBehaviour
 			if (forGame)
 			{
 				SceneLoading.mInstance.LoadNewScene();
-				forGame = false;
 			}
-			else if (forHistory) {
-				history.mInstance.forHistory();
-				forHistory = false;
-            } else {
-				SceneLoading.mInstance.LoadNewScene();
+			else if(forHistory) 
+			{
+				if (SceneManager.GetActiveScene().name == "StartScene")
+				    history.mInstance.forHistory();
+			} else if(forStart)
+			{
+				forStart = false;
 			}
 
 
 		}
 	}
+
+	public void PlaySound(AudioClip clip)
+    {
+		SESource.PlayOneShot(clip);
+    }
 
 	public void loadForContinue()
 	{
@@ -406,10 +431,12 @@ public class Router : MonoBehaviour
 	// Use this for initialization
 	void Start()
 	{
-		mInstance = this;
 
-		saveFile = Application.dataPath + "/Save" + "/GameData.json";
-		savePath = Application.dataPath + "/Save";
+		mInstance = this;
+		DontDestroyOnLoad(this);
+
+		saveFile = Application.persistentDataPath + "/Save" + "/GameData.json";
+		savePath = Application.persistentDataPath + "/Save";
 
 		if (!Directory.Exists(savePath))
 		{
@@ -421,10 +448,16 @@ public class Router : MonoBehaviour
 				isFirstTime = true;
 			}
 		} else {
-			loadForHistory();
+			DataLoad();
 		}
 
-		SettingFadeIn = GameSetting.GetComponent<Animation>();
+		if (SceneManager.GetActiveScene().name != "StartScene" && SceneManager.GetActiveScene().name != "HQ")
+		    SettingFadeIn = GameSetting.GetComponent<Animation>();
+
+		if (SceneManager.GetActiveScene().name != "StartScene" && SceneManager.GetActiveScene().name != "HQ")
+		    SESource = SE.GetComponent<AudioSource>();
+
+		SceneManager.LoadScene("StartScene");
 	}
 
 	// Update is called once per frame
@@ -432,7 +465,7 @@ public class Router : MonoBehaviour
 	{
 		//1分钟之后自动保存数据
 		autoSaveTime += Time.deltaTime;
-		if (Time.deltaTime >= 120f)
+		if (Time.deltaTime >= 60f)
 		{
 			if (SceneNum != "StartScene")
 			{
@@ -442,12 +475,18 @@ public class Router : MonoBehaviour
 			}
 		}
 
+		if (gameClear)
+		{
+			gameClearTimes++;
+			gameClear = false;
+		}
+
 		if (isFirstTime || loadFaild)
 		{
 			DataSave();
 			loadFaild = false;
 			isFirstTime = false;
-			loadForHistory();
+			DataLoad();
 		}
 
 		if (SceneManager.GetActiveScene().name == "StartScene")

@@ -96,4 +96,10 @@ public class SceneLoading : MonoBehaviour
 		
         SceneManager.LoadScene("loading");        
     }  
+
+	public void LoadNewSceneWithName(string name)
+	{
+		Globe.nextSceneName = name;
+		SceneManager.LoadScene("loading"); 
+	}
 }

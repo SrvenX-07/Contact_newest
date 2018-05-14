@@ -34,7 +34,7 @@ public class history : MonoBehaviour {
         if (Router.sED1)
         {
             ED1.SetActive(true);
-            ED1Name.text = "ED1";
+            ED1Name.text = "无法传达";
         }
         else
         {
@@ -45,7 +45,7 @@ public class history : MonoBehaviour {
         if (Router.sED2)
         {
             ED2.SetActive(true);
-            ED2Name.text = "ED2";
+            ED2Name.text = "不在服务区";
         }
         else
         {
@@ -56,7 +56,18 @@ public class history : MonoBehaviour {
         if (Router.sED3)
         {
             ED3.SetActive(true);
-            ED3Name.text = "ED3";
+            ED3Name.text = "不是病毒";
+        }
+        else
+        {
+            ED3.SetActive(false);
+            ED3Name.text = "？？？";
+        }
+
+		if (Router.sED4)
+        {
+            ED4.SetActive(true);
+			ED3Name.text = "回不到的过去";
         }
         else
         {
@@ -67,7 +78,7 @@ public class history : MonoBehaviour {
         if (Router.sED5)
         {
             ED5.SetActive(true);
-            ED5Name.text = "ED1";
+            ED5Name.text = "线上线下";
         }
         else
         {
@@ -78,7 +89,7 @@ public class history : MonoBehaviour {
         if (Router.postCardUsed)
         {
             postcard.SetActive(true);
-            postcardName.text = "ED1";
+            postcardName.text = "第一次的明信片";
         }
         else
         {
@@ -89,7 +100,7 @@ public class history : MonoBehaviour {
         if (Router.cameraUsed)
         {
             photo.SetActive(true);
-            photoName.text = "ED1";
+            photoName.text = "我们的照片";
         }
         else
         {
@@ -100,7 +111,7 @@ public class history : MonoBehaviour {
         if (Router.favUsed)
         {
             fav.SetActive(true);
-            favName.text = "ED1";
+            favName.text = "可爱的星星";
         }
         else
         {
@@ -111,13 +122,15 @@ public class history : MonoBehaviour {
         if (Router.teleCardUsed)
         {
             telecard.SetActive(true);
-            telecardName.text = "ED1";
+            telecardName.text = "超级电气猫";
         }
         else
         {
             telecard.SetActive(false);
             telecardName.text = "？？？";
         }
+
+		Router.forHistory = false;
 	}
 
 	// Use this for initialization
