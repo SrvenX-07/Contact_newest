@@ -22,8 +22,7 @@ public class GoodsClickInfo : MonoBehaviour
 
     public Button bedButton;
     public Button PosterButton;
-
-	public Component outline;
+    
 
 	public int curtain = 0;
 
@@ -141,13 +140,13 @@ public class GoodsClickInfo : MonoBehaviour
     {
         Debug.Log(clipRoad.name);
         audioRoad.PlayOneShot(clipRoad);
-		TipsText.text = "这感觉真像一场梦。";
+		TipsText.SetText("这感觉真像一场梦。");
     }
 
     public void OnKey()
     {
         //audiokey.PlayOneShot(clipkey);
-        TipsText.text = "噢，是⼀把钥匙，会打开哪⾥呢？";
+		TipsText.SetText("噢，是⼀把钥匙，会打开哪⾥呢？");
     }
 
     public void SetText(string content)
@@ -158,7 +157,7 @@ public class GoodsClickInfo : MonoBehaviour
     public void OnCD()
     {
         audioCD.PlayOneShot(clipCD);
-        TipsText.text = "你竟然发现了它！";
+        TipsText.text = "在哪找的唱片？";
     }
 
     public void Onphonograph()

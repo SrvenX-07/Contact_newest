@@ -57,6 +57,7 @@ public class Scene2Manager : MonoBehaviour
     public GameObject TR1;
     public GameObject TR2;
 	public GameObject ED2;
+	public GameObject Setting;
 
 	//道具获得状态
 	public bool ring;
@@ -507,18 +508,27 @@ public class Scene2Manager : MonoBehaviour
 
     //点击拨号盘
 	public void OnNumPad(){
-		int count = Random.Range(1, 2);
+		
+		if(Router.teleCardUsed)
+		{
+			num1.SetActive(true);
+			if (Router.knife2Used)
+				num2.SetActive(true);
+		}
+			 
+
+		int count = Random.Range(0, 3);
 		tempTextTime = 0;
 		switch(count) {
 			case 1:
 				GoodsClickInfo.mInstance.SetText("你想好要打谁的电话了吗。");
 				break;
+			case 2:
+				GoodsClickInfo.mInstance.SetText("我想人们在拨号之前需要插卡。");
+				break;
 			default:
 				break;
 		}
-		num1.SetActive(true);
-        if (Router.knife2Used)
-            num2.SetActive(true);
 	}
 
     //点击拨号盘
@@ -595,6 +605,7 @@ public class Scene2Manager : MonoBehaviour
 		Router.TR1 = TR1;
 		Router.TR2 = TR2;
 		Router.ED2 = ED2;
+		Router.GameSetting = Setting;
 	}
 
 	// Update is called once per frame
@@ -724,5 +735,14 @@ public class Scene2Manager : MonoBehaviour
 	public void DataSave()
     {
         Router.mInstance.DataSave();
+    }
+
+	public void SoundOn()
+    {
+        Router.mInstance.SoundOn();
+    }
+    public void SoundOff()
+    {
+        Router.mInstance.SoundOff();
     }
 }

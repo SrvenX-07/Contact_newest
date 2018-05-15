@@ -149,13 +149,19 @@ public class Router : MonoBehaviour
 
 		if (SceneManager.GetActiveScene().name == "3-1")
 		{
-			if (postCardUsed)
+			if (envelopUsed)
 			{
 				ED1.SetActive(true);
 				sED1 = true;
 			}
 
-			if (envelopUsed)
+			if (dolphUsed)
+            {
+                ED3.SetActive(true);
+                sED3 = true;
+            }
+
+			if (postCardUsed)
 			{
 				if (favUsed)
 					if (cameraUsed)
@@ -169,12 +175,6 @@ public class Router : MonoBehaviour
 						ED4.SetActive(true);
 						sED4 = true;
 					}
-			}
-         
-			if (dolphUsed)
-			{
-				ED3.SetActive(true);
-				sED3 = true;
 			}
 		}
 		DataSave();
@@ -431,6 +431,8 @@ public class Router : MonoBehaviour
 	// Use this for initialization
 	void Start()
 	{
+		Globe.nextSceneName = "StartScene";
+		SceneManager.LoadScene("loading");
 
 		mInstance = this;
 		DontDestroyOnLoad(this);
@@ -456,8 +458,6 @@ public class Router : MonoBehaviour
 
 		if (SceneManager.GetActiveScene().name != "StartScene" && SceneManager.GetActiveScene().name != "HQ")
 		    SESource = SE.GetComponent<AudioSource>();
-
-		SceneManager.LoadScene("StartScene");
 	}
 
 	// Update is called once per frame

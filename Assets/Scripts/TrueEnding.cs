@@ -9,6 +9,13 @@ public class TrueEnding : MonoBehaviour {
 	public GameObject edApplause;
 	public GameObject SE;
 
+	public GameObject clap1;
+	public GameObject clap2;
+	public GameObject clap3;
+	public GameObject clap4;
+	public GameObject clap5;
+
+
 	Animation aList;
 	AudioSource listSource;
 	AudioSource SESource;
@@ -27,7 +34,7 @@ public class TrueEnding : MonoBehaviour {
 
 		Router.sED5 = true;
 		Router.gameClear = true;
-		Router.mInstance.DataSave();
+		//Router.mInstance.DataSave();
 	}
 	
 	// Update is called once per frame
@@ -35,6 +42,11 @@ public class TrueEnding : MonoBehaviour {
 		    if(list.activeSelf)
 		        if (aList.isPlaying == false){
 			        edApplause.SetActive(true);
+				    clap1.SetActive(true);
+			        clap2.SetActive(true);
+			        clap3.SetActive(true);
+			        clap4.SetActive(true);
+			        clap5.SetActive(true);
 		}
 
 		if (edApplause.activeSelf)

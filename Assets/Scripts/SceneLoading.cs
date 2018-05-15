@@ -77,6 +77,9 @@ public class SceneLoading : MonoBehaviour
 		//保存需要加载的目标场景  
 		switch (SceneManager.GetActiveScene().name)
 		{
+			case "HQ":
+				Globe.nextSceneName = "StartScene";
+				break;
 			case "StartScene":
 				Globe.nextSceneName = "1-1";
 				break;

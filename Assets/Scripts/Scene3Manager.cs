@@ -11,8 +11,8 @@ public class Scene3Manager : MonoBehaviour
     public GameObject jpgObj;
     public GameObject smallJpgObj;
 
-    public GameObject pngObj;
-    public GameObject smallPngObj;
+    public GameObject gifObj;
+	public GameObject smallGifObj;
 
     public GameObject favObj;
     public GameObject smallFavObj;
@@ -44,6 +44,7 @@ public class Scene3Manager : MonoBehaviour
 	public GameObject ED1;
 	public GameObject ED3;
 	public GameObject ED4;
+	public GameObject Setting;
 
     //道具获得状态
     public bool myComp = false;
@@ -208,7 +209,7 @@ public class Scene3Manager : MonoBehaviour
     public void selectPng()
     {
         _pngSelCount++;
-        select_(smallPngObj);
+        select_(smallGifObj);
 		GoodsClickInfo.mInstance.SetText("这是海豚的小姑娘吗？");
 		_myCompSelCount = 0;
         _jpgSelCount = 0;
@@ -394,7 +395,7 @@ public class Scene3Manager : MonoBehaviour
         {
             pngGirl.SetActive(true);
             desktopErr.SetActive(true);
-            Destroy(smallPngObj);
+			smallJpgObj.SetActive(false);
 			Router.jpgUsed = true;
 			GoodsClickInfo.mInstance.SetText("好久不见！");
             useSuccess = true;
@@ -403,10 +404,10 @@ public class Scene3Manager : MonoBehaviour
             useFailed = true;
         }
 
-        if(selectingItem == smallPngObj){
+        if(selectingItem == smallGifObj){
             gifGirl.SetActive(true);
 			GoodsClickInfo.mInstance.SetText("真是位美丽的姑娘。");
-            Destroy(smallJpgObj);
+			smallGifObj.SetActive(false);
 			Router.gifUsed = true;
             useSuccess = true;
 			tempTextTime = 0;
@@ -433,8 +434,8 @@ public class Scene3Manager : MonoBehaviour
     public void OnNotFound() {
         ErrorAudio.PlayOneShot(ErrorClip);
         winRemixCount++;
-		float x = Random.Range(1, 1920);
-		float y = Random.Range(1, 1080);
+		float x = Random.Range(480, 1440);
+		float y = Random.Range(270, 810);
         
 		Instantiate(ErrClone,new Vector2(x,y),Quaternion.identity,ErrNotFound.transform);
 
@@ -568,7 +569,7 @@ public class Scene3Manager : MonoBehaviour
 				GoodsClickInfo.mInstance.SetText("我需要存放有文件的电脑来得到信息。");
                 break;
 			default:
-				GoodsClickInfo.mInstance.SetText("电脑就在附近，您可以再找一找。");
+				GoodsClickInfo.mInstance.SetText("您可以再找一找电脑，交给我。");
 				break;
 		}
 
@@ -597,8 +598,8 @@ public class Scene3Manager : MonoBehaviour
             }
 			if (Router.png)
 			{
-				SetpropPos.mInstance.SetPos(smallPngObj);
-				pngObj.SetActive(false);
+				SetpropPos.mInstance.SetPos(smallGifObj);
+				gifObj.SetActive(false);
 				gotPng();
 			}
 			if (Router.jpg)
@@ -625,7 +626,7 @@ public class Scene3Manager : MonoBehaviour
 			{
 				pngGirl.SetActive(true);
 				desktopErr.SetActive(true);
-				Destroy(smallPngObj);
+				Destroy(smallGifObj);
 			}
 
 			Router.forGame = false;
@@ -659,6 +660,7 @@ public class Scene3Manager : MonoBehaviour
 		Router.ED1 = ED1;
 		Router.ED3 = ED3;
 		Router.ED4 = ED4;
+		Router.GameSetting = Setting;
 	}
 
 	// Update is called once per frame
@@ -671,9 +673,9 @@ public class Scene3Manager : MonoBehaviour
         selectingItem_();
         if (NotFoundTime >= 7.0f)
         {
-            Debug.Log(NotFoundTime);
             ErrNotFound.SetActive(true);
-            ErrorAudio.PlayOneShot(ErrorClip);
+			if(ErrNotFound.activeSelf == false)
+                ErrorAudio.PlayOneShot(ErrorClip);
             NotFoundTime = 0;
         }
 
@@ -713,4 +715,13 @@ public class Scene3Manager : MonoBehaviour
 	public void DataSave(){
 		Router.mInstance.DataSave();
 	}
+
+	public void SoundOn()
+    {
+        Router.mInstance.SoundOn();
+    }
+    public void SoundOff()
+    {
+        Router.mInstance.SoundOff();
+    }
 }

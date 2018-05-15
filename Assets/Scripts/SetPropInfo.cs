@@ -153,8 +153,8 @@ public class SetPropInfo : MonoBehaviour, IPointerClickHandler
 			{
 				case "cd":
 					image.sprite = Resources.Load("cd", typeof(Sprite)) as Sprite;
-					TitleText.SetText("胶片");
-					ContenText.SetText("崭新的碟片，不知道里面\n有什么内容。");
+					TitleText.SetText("唱片");
+					ContenText.SetText("崭新的唱片，不知道里面\n有什么内容。");
 					use.SetActive(false);
 					_initDoubleCT();
 
@@ -279,30 +279,38 @@ public class SetPropInfo : MonoBehaviour, IPointerClickHandler
 					_initDoubleCT();
 					break;
 				case "postcard_h":
+					backGround.sprite = Resources.Load("mask", typeof(Sprite)) as Sprite;
+                    backGround.color = new Vector4(0, 0, 0, 0.5f);
                     image.sprite = Resources.Load("postcard_h", typeof(Sprite)) as Sprite;
 					TitleText.SetText("明信片和信封");
-					ContenText.SetText("<color=#009B9B>这是我和艾米用漂流瓶结实之后进行的第一次交流，\n\n我给了艾米一封信，她送了我明信片。\n\n我还记得自己激动的样子，她是我的第一位笔友，我不应该对她不理不睬。</color>");
+					ContenText.SetText("<color=#009B9B>这是我用漂流瓶发现艾米之后进行的第一次通信，\n\n我给了艾米一封信，她给了我明信片。\n\n我还记得自己开心的样子，她是我的第一位朋友，我不应该对她这么做。</color>");
                     use.SetActive(false);
                     _initDoubleCT();
                     break;
 				case "card_h":
+					backGround.sprite = Resources.Load("mask", typeof(Sprite)) as Sprite;
+                    backGround.color = new Vector4(0, 0, 0, 0.448f);
                     image.sprite = Resources.Load("card_h", typeof(Sprite)) as Sprite;
                     TitleText.SetText("超级电气猫");
-					ContenText.SetText("<color=#FF8C8C>艾米很喜欢这只猫，她用完了卡里的钱就把它转送给了我。\n\n我和她虽然住在不同的城市，但是我们约好在自己城市的红色电话亭里和对方聊天。\n\n又及，我不喜欢雪天，但是艾米喜欢。</color>");
+					ContenText.SetText("<color=#FF8C8C>艾米很喜欢这只猫，用完之后就把它给了我。\n\n我和她虽然在不同的地方，但是我们约好在红色电话亭见面。\n\n我不喜欢雪天，但是艾米喜欢。</color>");
                     use.SetActive(false);
                     _initDoubleCT();
                     break;
 				case "photo_h":
+					backGround.sprite = Resources.Load("mask", typeof(Sprite)) as Sprite;
+                    backGround.color = new Vector4(0, 0, 0, 0.448f);
                     image.sprite = Resources.Load("photo1", typeof(Sprite)) as Sprite;
                     TitleText.SetText("我们的照片");
-					ContenText.SetText("<color=#E85700>我其实并不讨厌和艾米一起合照，我只是不知所措。\n\n艾米说的对，我不能总生活在虚拟的世界里。</color>");
+					ContenText.SetText("<color=#E85700>我只是不知道怎么做。\n\n艾米说的对，我不能总生活在游戏里。</color>");
                     use.SetActive(false);
                     _initDoubleCT();
                     break;
 				case "fav_h":
+					backGround.sprite = Resources.Load("mask", typeof(Sprite)) as Sprite;
+					backGround.color = new Vector4(0, 0, 0, 0.448f);
                     image.sprite = Resources.Load("fav_h", typeof(Sprite)) as Sprite;
                     TitleText.SetText("给艾米的精选集");
-					ContenText.SetText("<color=#946D00>我早就准备了很多有意思的东西。\n\n可在网络上我会专注于游戏，线下又会很慌张。\n\n或许我该勇敢些，我和艾米毕竟是很好的朋友，不是吗？</color>");
+					ContenText.SetText("<color=#946D00>我有很多有意思的东西。\n\n可在网络上我会认真玩游戏，线下又会很紧张。\n\n或许我不该这么想，我和艾米是很好的朋友，不是吗？</color>");
                     use.SetActive(false);
                     _initDoubleCT();
                     break;
@@ -311,7 +319,7 @@ public class SetPropInfo : MonoBehaviour, IPointerClickHandler
 					backGround.color = new Vector4(1, 1, 1, 1);
 					image.sprite = Resources.Load("mask-nothing", typeof(Sprite)) as Sprite;
 					TitleText.SetText("");
-					ContenText.SetText("<color=#000>不！我第一次写给她的信，我竟然忘记了，这本来是值得纪念的一件事。</color>");
+					ContenText.SetText("<color=#000>不！我第一次写给她的信，竟然不见了，这可不好。</color>");
                     use.SetActive(false);
                     _initDoubleCT();
                     break;
@@ -320,7 +328,7 @@ public class SetPropInfo : MonoBehaviour, IPointerClickHandler
 					backGround.color = new Vector4(1, 1, 1, 1);
 					image.sprite = Resources.Load("mask-nothing", typeof(Sprite)) as Sprite;
 					TitleText.SetText("");
-					ContenText.SetText("<color=#000>她的号码是多少？我明明有记下来过，我的良心也在让我打电话给她。</color>");
+					ContenText.SetText("<color=#000>她的号码是多少？\n我明明有记下来过，那个声音也在让我打电话给她。</color>");
                     use.SetActive(false);
                     _initDoubleCT();
                     break;
@@ -329,7 +337,7 @@ public class SetPropInfo : MonoBehaviour, IPointerClickHandler
 					backGround.color = new Vector4(1, 1, 1, 1);
 					image.sprite = Resources.Load("mask-nothing", typeof(Sprite)) as Sprite;
 					TitleText.SetText("");
-					ContenText.SetText("<color=#000>或许网络安全和医疗安全同等重要。</color>");
+					ContenText.SetText("<color=#000>线下可没有慷慨的海豚，我们应该记下来。</color>");
                     use.SetActive(false);
                     _initDoubleCT();
                     break;
@@ -338,7 +346,7 @@ public class SetPropInfo : MonoBehaviour, IPointerClickHandler
 					backGround.color = new Vector4(1, 1, 1, 1);
 					image.sprite = Resources.Load("mask-nothing", typeof(Sprite)) as Sprite;
 					TitleText.SetText("");
-					ContenText.SetText("<color=#000>我最后还是选择了不真实的线上，这样做值得吗？</color>");
+					ContenText.SetText("<color=#000>我最后还是选了线上，这样做对吗？</color>");
                     use.SetActive(false);
                     _initDoubleCT();
                     break;
@@ -347,7 +355,7 @@ public class SetPropInfo : MonoBehaviour, IPointerClickHandler
 					backGround.color = new Vector4(1, 1, 1, 1);
 					image.sprite = Resources.Load("mask-nothing", typeof(Sprite)) as Sprite;
 					TitleText.SetText("");
-					ContenText.SetText("<color=#000>艾米，我错了，我不应该放你鸽子，这是我这辈子最错误的决定，我会尽我的所能改正这个坏毛病。\n\n对了，还有你，屏幕前的你，我知道是你帮助我找回艾米。\n\n即便过程有些艰辛，可是你仍然做到了，你是世界上最棒的人，谢谢。</color>");
+					ContenText.SetText("<color=#000>艾米，我错了，我不应该放你鸽子，这是我最错误的决定，我会尽我的所能改正这件事。\n\n对了，还有你，就是你，我知道是你帮助我找回艾米。\n\n你做到了，你是最好的人，谢谢。</color>");
                     use.SetActive(false);
                     _initDoubleCT();
                     break;
